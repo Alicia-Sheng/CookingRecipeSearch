@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+    <title>Cooking Recipe Search</title>
+</head>
+<body>
+
+    <div class="jumbotron jumbotron-fluid bg-info text-white text-center">
+        <h1 class="display-3">Cooking Recipe Search</h1>
+        <p class="lead">Your customized search for everyday's recipe!</p>
+        <br>
+
+        <div class="container">
+            <form action="{{ url_for('results') }}" name="search" method="post">
+                <!-- main search box-->
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="what for today?" id="query" name="main_query">
+                </div>
+
+                <!-- advanced search options -->
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-info">
+                        <h4 class="panel-heading">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#advancedSearch">
+                                Advanced Search
+                            </a>
+                            </div>
+                        </h4>
+                    </div>
+                    <div id="advancedSearch" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="hidden" id="fat" value="fat_none" name="fat">
+                                <input class="form-check-input" type="checkbox" id="fat" value="fat" name="fat">
+                                <label class="form-check-label" for="fat">fat</label>
+                            </div>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="hidden" id="nrg_none" value="nrg">
+                                <input class="form-check-input" type="checkbox" id="nrg" value="nrg">
+                                <label class="form-check-label" for="nrg">nrg</label>
+                            </div>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="hidden" id="pro" value="pro_none">
+                                <input class="form-check-input" type="checkbox" id="pro" value="pro">
+                                <label class="form-check-label" for="pro">pro</label>
+                            </div>
+                            
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="hidden" id="" value="">
+                                <input class="form-check-input" type="checkbox" id="" value="">
+                                <label class="form-check-label" for=""></label>
+                            </div>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="" value="">
+                                <label class="form-check-label" for=""></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>               
+                
+                <!-- Submit button -->
+                <input type="submit" class="btn btn-outline-light  mb-4" value="--> Search <--">
+            </form>
+        </div>
+    </div>
+
+    <!-- Initial display -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-lg-3">
+                <div class="card">
+                    <img src="https://cdn.pixabay.com/photo/2020/06/26/17/16/daisies-5343423_1280.jpg" class="card-img-top img-fluid " alt="...">
+                    <div class="card-body">
+                        <div class="card-title">Dish 1</div>
+                        <p class="card-text">Description of Dish 1</p>
+                        <button class="btn btn-info">Link to recipe</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card">
+                    <img src="https://cdn.pixabay.com/photo/2020/04/20/09/42/seagulls-5067489_1280.jpg" class="card-img-top img-fluid" alt="...">
+                    <div class="card-body">
+                        <div class="card-title">Dish 1</div>
+                        <p class="card-text">Description of Dish 1</p>
+                        <button class="btn btn-info">Link to recipe</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card">
+                    <img src="https://cdn.pixabay.com/photo/2020/09/07/16/32/fishing-5552310_1280.jpg" class="card-img-top img-fluid" alt="...">
+                    <div class="card-body">
+                        <div class="card-title">Dish 1</div>
+                        <p class="card-text">Description of Dish 1</p>
+                        <button class="btn btn-info">Link to recipe</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card">
+                    <img src="https://cdn.pixabay.com/photo/2020/08/25/11/11/zebra-5516455_1280.jpg" class="card-img-top img-fluid" alt="...">
+                    <div class="card-body">
+                        <div class="card-title">Dish 1</div>
+                        <p class="card-text">Description of Dish 1</p>
+                        <button class="btn btn-info">Link to recipe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    {% block result_display %}
+    {% endblock %}
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
+</body>
+</html>
