@@ -21,12 +21,10 @@ class BaseDoc(Document):
     title = (
         Text()
     )  # by default, Text field will be applied a standard analyzer at both index and search time
-    instructions = Nested(
-        analyzer="english"
-    )
-    fsa_lights_per100g = Object()  # we can also set the standard analyzer explicitly
-    ingredients = Object()  # index the same content again with english analyzer
-    nutr_values_per100g = Object()
+    instructions = Object(dynamic="false")
+    fsa_lights_per100g = Object(dynamic="false")  # we can also set the standard analyzer explicitly
+    ingredients = Object(dynamic="false")  # index the same content again with english analyzer
+    nutr_values_per100g = Object(dynamic="false")
     URL = Text()
 
     def save(self, *args, **kwargs):

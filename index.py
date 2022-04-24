@@ -5,7 +5,7 @@ from elasticsearch_dsl import Index  # type: ignore
 from elasticsearch_dsl.connections import connections  # type: ignore
 from elasticsearch.helpers import bulk
 
-from es_service.doc_template import BaseDoc
+from doc_template import BaseDoc
 
 
 class ESIndex(object):
@@ -44,15 +44,13 @@ class ESIndex(object):
         """
         for i, doc in enumerate(docs):
             es_doc = BaseDoc(_id=i)
-            es_doc.doc_id = doc["doc_id"]
+            es_doc.id = doc["id"]
             es_doc.title = doc["title"]
-            es_doc.author = doc["author"]
-            es_doc.content = doc["content_str"]
-            es_doc.stemmed_content = doc["content_str"]
-            es_doc.annotation = doc["annotation"]
-            es_doc.date = doc["published_date"]
-            es_doc.ft_vector = doc["ft_vector"]
-            es_doc.sbert_vector = doc["sbert_vector"]
+            es_doc.instructions = doc["instructions"]
+            es_doc.fsa_lights_per100g = doc["fsa_lights_per100g"]
+            es_doc.ingredients = doc["ingredients"]
+            es_doc.nutr_values_per100g = doc["nutr_values_per100g"]
+            es_doc.URL = doc["url"]
             yield es_doc
 
     def load(self, docs: Union[Iterator[Dict], Sequence[Dict]]):
@@ -66,32 +64,3 @@ class ESIndex(object):
                 for d in self._populate_doc(docs)
             ),
         )
-
-    def create_index(es_object, index_name='recipes'):
-        created = False
-        # index settings
-        settings = {
-            "settings": {
-                "number_of_shards": 1,
-                "number_of_replicas": 0
-            },
-            "mappings": {
-                "members": {
-                    "dynamic": "strict",
-                    "properties": {
-                        "title": {
-                            "type": "text"
-                        },
-                        "submitter": {
-                            "type": "text"
-                        },
-                        "description": {
-                            "type": "text"
-                        },
-                        "calories": {
-                            "type": "integer"
-                        },
-                    }
-                }
-            }
-        }

@@ -17,11 +17,12 @@ def load_clean_wapo_with_embedding(
         doc = dict()
         doc["id"] = d["id"]
         doc["title"] = d["title"]
-        instruction = []
-        for instruction_line in d["instructions"]:
-            instruction.append(instruction_line["text"])
+        instruction = dict()
+        for i in range(len(d["instructions"])):
+            instruction_line = d["instructions"][i]
+            instruction[i] = instruction_line["text"]
         doc["instructions"] = instruction
-        doc["nutr_lights_per100g"] = d["fsa_lights_per100g"]
+        doc["fsa_lights_per100g"] = d["fsa_lights_per100g"]
         doc["ingredients"] = dict()
         for i in range(len(d["ingredients"])):
             ingredient = d["ingredients"][i]
@@ -46,8 +47,6 @@ def load_clean_wapo_with_embedding(
         doc["nutr_values_per100g"] = d["nutr_values_per100g"]
         doc["url"] = d["url"]
         yield doc
-        # print(doc)
-        # break
 
 
 if __name__ == "__main__":

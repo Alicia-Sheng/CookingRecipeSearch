@@ -1,7 +1,7 @@
 import argparse
 import time
 from typing import List, Dict, Union, Iterator
-from es_service.index import ESIndex
+from index import ESIndex
 from utils import load_clean_wapo_with_embedding
 import logging
 
@@ -49,14 +49,14 @@ def main():
         help="name of the ES index",
     )
     parser.add_argument(
-        "--wapo_path",
+        "--path",
         required=True,
         type=str,
-        help="path to the processed wapo jsonline file",
+        help="path to the processed jsonline file",
     )
 
     args = parser.parse_args()
-    idx_loader = IndexLoader.from_docs_jsonl(args.index_name, args.wapo_path)
+    idx_loader = IndexLoader.from_docs_jsonl(args.index_name, args.path)
     idx_loader.load()
 
 
