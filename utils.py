@@ -23,6 +23,13 @@ def load_clean_wapo_with_embedding(
             instruction[i] = instruction_line["text"]
         doc["instructions"] = instruction
         doc["fsa_lights_per100g"] = d["fsa_lights_per100g"]
+        healthiness = 0
+        for ingredient in d["fsa_lights_per100g"]:
+            if d["fsa_lights_per100g"][ingredient] == "green":
+                healthiness += 1
+            elif d["fsa_lights_per100g"][ingredient] == "red":
+                healthiness -= 1
+        doc["healthiness"] = healthiness
         doc["ingredients"] = dict()
         for i in range(len(d["ingredients"])):
             ingredient = d["ingredients"][i]

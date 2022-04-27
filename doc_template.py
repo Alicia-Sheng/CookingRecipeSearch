@@ -1,6 +1,7 @@
 from elasticsearch_dsl import (  # type: ignore
     Document,
     Text,
+    Integer,
     Keyword,
     DenseVector,
     token_filter,
@@ -15,14 +16,11 @@ class BaseDoc(Document):
     wapo document mapping structure
     """
 
-    id = (
-        Keyword()
-    )  # we want to treat the doc_id as a Keyword (its value won't be tokenized or normalized).
-    title = (
-        Text()
-    )  # by default, Text field will be applied a standard analyzer at both index and search time
+    id = Keyword() # we want to treat the id as a Keyword (its value won't be tokenized or normalized).
+    title = Text() # by default, Text field will be applied a standard analyzer at both index and search time
     instructions = Object(dynamic="false")
     fsa_lights_per100g = Object(dynamic="false")  # we can also set the standard analyzer explicitly
+    healthiness = Integer()
     ingredients = Object(dynamic="false")  # index the same content again with english analyzer
     nutr_values_per100g = Object(dynamic="false")
     URL = Text()
