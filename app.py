@@ -29,12 +29,19 @@ def results():
     global response
     connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
     query_text = request.form["main_query"]
-    fat = request.form["fat"]
+
+    # Need to take a look at the fat variabel
+    # fat = request.form["fat"]  #This line is not working
+    ## we can add options of sorting methods here
     q_title = Match(title={"query": query_text})
     # q_instructions = Match(instructions={"query": "Layer"})
-    response = search_by_healthiness(index_name, q_title, top_k)
+
+    # ===== different sorting options
+    # ===== now this is sorted by the length of instructions
+    # response = search_by_healthiness(index_name, q_title, top_k)
+    response = search_by_instruction_length(index_name, q_title, top_k)
     temp_result = response[:ONE_PAGE]
-    return render_template("results_test.html", query=query_text, fat=fat, doc=temp_result)
+    return render_template("results_test.html", query=query_text, doc=temp_result)
     # return render_template("results.html", query=query_text, fat=fat, doc=temp_result)
 
 def search(index: str, query: Query, top_k) -> None:
@@ -50,6 +57,11 @@ def search_by_healthiness(index: str, query: Query, top_k) -> None:
     #     print(
     #         hit.meta.id, hit.meta.score, hit.title, hit.ingredients, hit.healthiness, sep="\t"
     #     )  # print the document id that is assigned by ES index, score and title
+
+def search_by_instruction_length(index: str, query: Query, top_k) -> None:
+    s = Search(using="default", index=index).query(query)[:top_k].sort({"instructions_length": {"order": "asc"}})  # initialize a query and return top five results
+    r = s.execute()
+    return r
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

@@ -47,6 +47,7 @@ class ESIndex(object):
             es_doc.id = doc["id"]
             es_doc.title = doc["title"]
             es_doc.instructions = doc["instructions"]
+            es_doc.instructions_length = doc["instructions_length"]
             es_doc.fsa_lights_per100g = doc["fsa_lights_per100g"]
             es_doc.healthiness = doc["healthiness"]
             es_doc.ingredients = doc["ingredients"]

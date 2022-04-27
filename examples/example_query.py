@@ -1,7 +1,7 @@
 from typing import List
 
 from elasticsearch_dsl import Search
-from elasticsearch_dsl.query import Match, MatchAll, ScriptScore, Ids, Query
+from elasticsearch_dsl.query import Match, MatchAll, ScriptScore, Query
 from elasticsearch_dsl.connections import connections
 #from embedding_service.client import EmbeddingClient
 
@@ -32,7 +32,7 @@ def search(index: str, query: Query) -> None:
     response = s.execute()
     for hit in response:
         print(
-            hit.meta.id, hit.meta.score, hit.title, hit.ingredients, hit.healthiness, sep="\t"
+            hit.meta.id, hit.meta.score, hit.title, hit.ingredients, hit.healthiness, hit.instructions_length, sep="\t"
         )  # print the document id that is assigned by ES index, score and title
 
 
@@ -72,12 +72,6 @@ if __name__ == "__main__":
 
     search(
         "cooking_recipe", q_title
-    )  # search, change the query object to see different results
-
-    print("="*20)
-
-    search(
-        "cooking_recipe", q_instructions
     )  # search, change the query object to see different results
 
     print("="*20)
