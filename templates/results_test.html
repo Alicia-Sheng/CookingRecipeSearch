@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Washington Post Search</title>
+    <meta name="author" content="Alicia Sheng">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: lightskyblue;
+        }
+    </style>
+    <script>
+    </script>
+</head>
+<body>
+    <h3>Cooking Recipe Search Results</h3>
+    <form action="{{ url_for('results') }}" name="search" method="post">
+        <label for="query">Query:</label>
+        <input type="text" id="query" name="query" size=50 placeholder="{{query[0]}}"><br>
+        <input type="submit" value="Search">
+    </form>
+    {% if doc|length != 0 %}
+        <p>Your results are</p>
+        <ul>
+            {% for d in doc %}
+                <li>{{d.title}}</a></li>
+                <p>{{d.instructions}}</p>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>
