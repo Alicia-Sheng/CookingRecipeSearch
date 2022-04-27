@@ -3,7 +3,7 @@ from typing import List
 from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import Match, MatchAll, ScriptScore, Ids, Query
 from elasticsearch_dsl.connections import connections
-from embedding_service.client import EmbeddingClient
+#from embedding_service.client import EmbeddingClient
 
 # encoder = EmbeddingClient(host="localhost", embedding_type="sbert")
 # encoder = EmbeddingClient(host="localhost", embedding_type="fasttext")
@@ -28,13 +28,11 @@ def generate_script_score_query(query_vector: List[float], vector_name: str) -> 
     return q_script
 
 def search(index: str, query: Query) -> None:
-    s = Search(using="default", index=index).query(query)[
-        :5
-    ]  # initialize a query and return top five results
+    s = Search(using="default", index=index).query(query)[:5].sort({"healthiness": {"order": "desc"}})  # initialize a query and return top five results
     response = s.execute()
     for hit in response:
         print(
-            hit.meta.id, hit.meta.score, hit.title, hit.ingredients ,sep="\t"
+            hit.meta.id, hit.meta.score, hit.title, hit.ingredients, hit.healthiness, sep="\t"
         )  # print the document id that is assigned by ES index, score and title
 
 
@@ -73,13 +71,13 @@ if __name__ == "__main__":
     )  # a query that matches "D.C" in the title field of the index, using BM25 as default
 
     search(
-        "recipe_data", q_title
+        "cooking_recipe", q_title
     )  # search, change the query object to see different results
 
     print("="*20)
 
     search(
-        "recipe_data", q_instructions
+        "cooking_recipe", q_instructions
     )  # search, change the query object to see different results
 
     print("="*20)
