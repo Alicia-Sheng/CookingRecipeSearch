@@ -32,16 +32,21 @@ def results():
 
     # Need to take a look at the fat variabel
     # fat = request.form["fat"]  #This line is not working
-    ## we can add options of sorting methods here
-    q_title = Match(title={"query": query_text})
-    # q_instructions = Match(instructions={"query": "Layer"})
+
+    ## =============
+    ## we can add options of searching methods here
+    ## match by title:
+    # query = Match(title={"query": query_text}) ## this matches the title
+    query = Match(ingredients_plain_text={"query": query_text}) ## this matches the ingredients
+    ## =============
 
     # ===== different sorting options
-    # ===== now this is sorted by the length of instructions
+    # ===== now this is sorted by the length of healthiness/instructions
     # response = search_by_healthiness(index_name, q_title, top_k)
-    response = search_by_instruction_length(index_name, q_title, top_k)
+    response = search_by_instruction_length(index_name, query, top_k)
     temp_result = response[:ONE_PAGE]
     return render_template("results_test.html", query=query_text, doc=temp_result)
+    ## =============
     # return render_template("results.html", query=query_text, fat=fat, doc=temp_result)
 
 def search(index: str, query: Query, top_k) -> None:

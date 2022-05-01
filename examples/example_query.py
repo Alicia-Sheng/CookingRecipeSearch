@@ -32,7 +32,7 @@ def search(index: str, query: Query) -> None:
     response = s.execute()
     for hit in response:
         print(
-            hit.meta.id, hit.meta.score, hit.title, hit.ingredients, hit.healthiness, hit.instructions_length, sep="\t"
+            hit.meta.id, hit.meta.score, hit.title, hit.ingredients_plain_text, sep="\t"
         )  # print the document id that is assigned by ES index, score and title
 
 

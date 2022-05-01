@@ -51,6 +51,7 @@ class ESIndex(object):
             es_doc.fsa_lights_per100g = doc["fsa_lights_per100g"]
             es_doc.healthiness = doc["healthiness"]
             es_doc.ingredients = doc["ingredients"]
+            es_doc.ingredients_plain_text = doc["ingredients_plain_text"]
             es_doc.nutr_values_per100g = doc["nutr_values_per100g"]
             es_doc.URL = doc["url"]
             yield es_doc
