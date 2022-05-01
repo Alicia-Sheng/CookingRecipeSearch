@@ -27,15 +27,6 @@ def generate_script_score_query(query_vector: List[float], vector_name: str) -> 
     )
     return q_script
 
-def search(index: str, query: Query) -> None:
-    s = Search(using="default", index=index).query(query)[:5].sort({"healthiness": {"order": "desc"}})  # initialize a query and return top five results
-    response = s.execute()
-    for hit in response:
-        print(
-            hit.meta.id, hit.meta.score, hit.title, hit.ingredients_plain_text, sep="\t"
-        )  # print the document id that is assigned by ES index, score and title
-
-
 def rescore_search(index: str, query: Query, rescore_query: Query) -> None:
     s = Search(using="default", index=index).query(query)[
         :5
@@ -56,6 +47,16 @@ def rescore_search(index: str, query: Query, rescore_query: Query) -> None:
             hit.meta.id, hit.meta.score, hit.title, sep="\t"
         )  # print the document id that is assigned by ES index, score and title
 
+def search(index: str, query: Query) -> None:
+    s = Search(using="default", index=index).query(query)[:5].sort({"healthiness": {"order": "desc"}})  # initialize a query and return top five results
+    response = s.execute()
+    for hit in response:
+        print(
+            hit.meta.id, hit.meta.score, hit.title, hit.nutr_values_per100g_energy,
+            hit.nutr_values_per100g_fat, hit.nutr_values_per100g_protein,
+            hit.nutr_values_per100g_salt, hit.nutr_values_per100g_saturates,
+            hit.nutr_values_per100g_sugars,sep="\t"
+        )  # print the document id that is assigned by ES index, score and title
 
 if __name__ == "__main__":
     # python load_es_index.py --index_name recipe_data --path data/recipes_with_nutritional_info.json
@@ -66,12 +67,16 @@ if __name__ == "__main__":
         title={"query": "chicken"}
     )  # a query that matches "D.C" in the title field of the index, using BM25 as default
 
-    q_instructions = Match(
-        instructions={"query": "Layer"}
-    )  # a query that matches "D.C" in the title field of the index, using BM25 as default
+    q_ingredients = Match(
+        ingredients_plain_text={"query": "rice"}
+    )
 
     search(
         "cooking_recipe", q_title
     )  # search, change the query object to see different results
 
     print("="*20)
+
+    search(
+        "cooking_recipe", q_ingredients
+    )  # search, change the query object to see different results

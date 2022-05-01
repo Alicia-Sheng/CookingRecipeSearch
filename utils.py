@@ -58,7 +58,12 @@ def load_clean_wapo_with_embedding(
             nutr = d["nutr_per_ingredient"][i]
             doc["ingredients"][ing]["nutr_per_ingredient"] = nutr
         doc["ingredients_plain_text"] = ingredients_plain_text
-        doc["nutr_values_per100g"] = d["nutr_values_per100g"]
+        doc["nutr_values_per100g_energy"] = d["nutr_values_per100g"]["energy"]
+        doc["nutr_values_per100g_fat"] = d["nutr_values_per100g"]["fat"]
+        doc["nutr_values_per100g_protein"] = d["nutr_values_per100g"]["protein"]
+        doc["nutr_values_per100g_salt"] = d["nutr_values_per100g"]["salt"]
+        doc["nutr_values_per100g_saturates"] = d["nutr_values_per100g"]["saturates"]
+        doc["nutr_values_per100g_sugars"] = d["nutr_values_per100g"]["sugars"]
         doc["url"] = d["url"]
         yield doc
 
