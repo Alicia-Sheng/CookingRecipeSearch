@@ -8,13 +8,14 @@
 </head>
 <body>
 
+    {% block banner_search %}
     <div class="jumbotron jumbotron-fluid bg-info text-white text-center">
         <h1 class="display-3">Cooking Recipe Search</h1>
         <p class="lead">Your customized search for everyday's recipe!</p>
         <br>
 
         <div class="container">
-            <form action="{{ url_for('results') }}" name="search" method="post">
+            <form action="{{ url_for('r') }}" name="search" method="post">
                 <!-- main search box-->
                 <div class="form-group">
                     <input type="text" class="form-control" placeholder="what for today?" id="query" name="main_query">
@@ -23,36 +24,36 @@
                 <!-- advanced search options -->
                 <div class="panel-group" id="accordion">
                     <div class="panel panel-info">
-                        <h4 class="panel-heading">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#advancedSearch">
+                        <h7 class="panel-heading">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#advancedSearch" style="color: white;">
                                 Advanced Search
                             </a>
                             </div>
-                        </h4>
+                        </h7>
                     </div>
                     <div id="advancedSearch" class="panel-collapse collapse">
                         <div class="panel-body">
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="hidden" id="fat" value="fat_none" name="fat">
-                                <input class="form-check-input" type="checkbox" id="fat" value="fat" name="fat">
-                                <label class="form-check-label" for="fat">fat</label>
+                                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                <label class="form-check-label" for="inlineRadio1">1</label>
                             </div>
 
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="hidden" id="nrg_none" value="nrg">
-                                <input class="form-check-input" type="checkbox" id="nrg" value="nrg">
-                                <label class="form-check-label" for="nrg">nrg</label>
+                                <input class="form-check-input" type="hidden" id="health" value="health_none" name="health">
+                                <input class="form-check-input" type="checkbox" id="health" value="health" name="health">
+                                <label class="form-check-label" for="">health</label>
                             </div>
 
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="hidden" id="pro" value="pro_none">
-                                <input class="form-check-input" type="checkbox" id="pro" value="pro">
-                                <label class="form-check-label" for="pro">pro</label>
+                                <input class="form-check-input" type="hidden" id="instructions" value="instructions_none" name="instructions">
+                                <input class="form-check-input" type="checkbox" id="instructions" value="instructions" name="instructions">
+                                <label class="form-check-label" for="">less instructions?</label>
                             </div>
-                            
+
+                            <!--                            
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="hidden" id="" value="">
-                                <input class="form-check-input" type="checkbox" id="" value="">
+                                <input class="form-check-input" type="hidden" id="" value="" name="">
+                                <input class="form-check-input" type="checkbox" id="" value="" name="">
                                 <label class="form-check-label" for=""></label>
                             </div>
 
@@ -60,22 +61,28 @@
                                 <input class="form-check-input" type="checkbox" id="" value="">
                                 <label class="form-check-label" for=""></label>
                             </div>
+                            -->
+
                         </div>
                     </div>
-                </div>               
+                </div>
+                
+                <br>
                 
                 <!-- Submit button -->
                 <input type="submit" class="btn btn-outline-light  mb-4" value="--> Search <--">
             </form>
         </div>
     </div>
+    {% endblock %}
 
+    {% block cards %}
     <!-- Initial display -->
     <div class="container">
         <div class="row">
             <div class="col-md-6 col-lg-3">
                 <div class="card">
-                    <img src="https://cdn.pixabay.com/photo/2020/06/26/17/16/daisies-5343423_1280.jpg" class="card-img-top img-fluid " alt="...">
+                    <img src="https://c.recipeland.com/images/r/2265/37e65c579a74bec2c9e2_300.jpg" class="card-img-top img-fluid " alt="...">
                     <div class="card-body">
                         <div class="card-title">Dish 1</div>
                         <p class="card-text">Description of Dish 1</p>
@@ -86,7 +93,7 @@
 
             <div class="col-md-6 col-lg-3">
                 <div class="card">
-                    <img src="https://cdn.pixabay.com/photo/2020/04/20/09/42/seagulls-5067489_1280.jpg" class="card-img-top img-fluid" alt="...">
+                    <img src="https://tastykitchen.com/recipes/wp-content/uploads/sites/2/2014/03/Honey-Sriracha-Chicken-Wings-by-Sarah-@-The-Woks-of-Life-on-March-28-2014-410x273.jpg" class="card-img-top img-fluid" alt="...">
                     <div class="card-body">
                         <div class="card-title">Dish 1</div>
                         <p class="card-text">Description of Dish 1</p>
@@ -97,7 +104,7 @@
 
             <div class="col-md-6 col-lg-3">
                 <div class="card">
-                    <img src="https://cdn.pixabay.com/photo/2020/09/07/16/32/fishing-5552310_1280.jpg" class="card-img-top img-fluid" alt="...">
+                    <img src="https://c.recipeland.com/images/r/21521/264863d71309ff06b83c_300.jpg" class="card-img-top img-fluid" alt="...">
                     <div class="card-body">
                         <div class="card-title">Dish 1</div>
                         <p class="card-text">Description of Dish 1</p>
@@ -108,7 +115,7 @@
 
             <div class="col-md-6 col-lg-3">
                 <div class="card">
-                    <img src="https://cdn.pixabay.com/photo/2020/08/25/11/11/zebra-5516455_1280.jpg" class="card-img-top img-fluid" alt="...">
+                    <img src="https://c.recipeland.com/images/r/1536/a1667ba49d8e04100d77_300.jpg" class="card-img-top img-fluid" alt="...">
                     <div class="card-body">
                         <div class="card-title">Dish 1</div>
                         <p class="card-text">Description of Dish 1</p>
@@ -118,7 +125,10 @@
             </div>
         </div>
     </div>
-    
+    {% endblock %}
+
+    {% block search %}
+    {% endblock %}
 
     {% block result_display %}
     {% endblock %}

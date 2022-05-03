@@ -1,10 +1,12 @@
 import ast
+from operator import methodcaller
 from flask import Flask, render_template, request
 from typing import List, Dict, Tuple
 from typing import List
 from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import Match, MatchAll, ScriptScore, Ids, Query
 from elasticsearch_dsl.connections import connections
+from torch import HOIST_CONV_PACKED_PARAMS
 
 app = Flask(__name__)
 index_name= "cooking_recipe"
@@ -22,6 +24,16 @@ def home():
     """
     return render_template("home.html")
 
+@app.route("/r", methods=['POST'])
+def r():
+    connections.create_connection(hosts=['localhost'], timeout=100, alias='default')
+    query_text = request.form['main_query']
+
+
+
+@app.route("/test")
+def test():
+    return render_template("results.html")
 
 # result page
 @app.route("/results", methods=["POST"])
@@ -29,6 +41,7 @@ def results():
     global response
     connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
     query_text = request.form["main_query"]
+    # query_text = request.form["query"]  # used for results_test
 
     # Need to take a look at the fat variabel
     # fat = request.form["fat"]  #This line is not working

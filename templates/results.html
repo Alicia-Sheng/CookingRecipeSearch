@@ -1,5 +1,31 @@
 {% extends "home.html" %}
 
+{% block banner_search %}
+{% endblock %}
+
+{% block cards %}
+{% endblock %}
+
+{% block search %}
+<div class="jumbotron jumbotron-fluid bg-info text-white text-cente">
+    <div class="container">
+        <div class="input-group">
+            <input type="text" class="form-control" aria-label="Text input with dropdown button">
+            <div class="input-group-append">
+              <button class="btn btn-outline-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <a class="dropdown-item" href="#">Something else here</a>
+                <div role="separator" class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Separated link</a>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
 {% block result_display %}
     <p>This is result page: {{ query }}</p>
     <p>Any fat? {{ fat }}...</p>
