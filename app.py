@@ -1,12 +1,14 @@
 import ast
-from operator import methodcaller
+# from curses import termattrs
+# from operator import methodcaller
+from socket import timeout
 from flask import Flask, render_template, request
 from typing import List, Dict, Tuple
 from typing import List
 from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import Match, MatchAll, ScriptScore, Ids, Query
 from elasticsearch_dsl.connections import connections
-from torch import HOIST_CONV_PACKED_PARAMS
+# from torch import HOIST_CONV_PACKED_PARAMS
 
 app = Flask(__name__)
 index_name= "cooking_recipe"
@@ -24,16 +26,24 @@ def home():
     """
     return render_template("home.html")
 
-@app.route("/r", methods=['POST'])
-def r():
-    connections.create_connection(hosts=['localhost'], timeout=100, alias='default')
-    query_text = request.form['main_query']
 
-
-
-@app.route("/test")
+@app.route("/tests")
 def test():
-    return render_template("results.html")
+    return render_template("results.html", query_text="")
+
+@app.route("/tests/results", methods=["POST"])
+def test_results():
+    global response
+    connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
+    query_text = request.form["query_text"]
+    query_type_raw = request.form["query_type"]
+    query_type = int(query_type_raw) if query_type_raw != "" else 0
+
+    query = Match(title={"query": query_text})
+    response = search(index_name, query, top_k)
+    temp_result = response[:ONE_PAGE]
+    return render_template("results.html", query_text=query_text, query_type=query_type, doc=temp_result)
+
 
 # result page
 @app.route("/results", methods=["POST"])
@@ -75,7 +85,7 @@ def results():
     # return render_template("results.html", query=query_text, fat=fat, doc=temp_result)
 
 def search(index: str, query: Query, top_k) -> None:
-    s = Search(using="default", index=index).query(query)[:top_k]  # initialize a query and return top five results
+    s = Search(using="default", index=index).query(query)[:top_k]  # initialize a query and return top k results
     r = s.execute()
     return r
 
