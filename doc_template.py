@@ -2,6 +2,7 @@ from elasticsearch_dsl import (  # type: ignore
     Document,
     Text,
     Integer,
+    Float,
     Keyword,
     DenseVector,
     token_filter,
@@ -23,7 +24,16 @@ class BaseDoc(Document):
     fsa_lights_per100g = Object(dynamic="false")  # we can also set the standard analyzer explicitly
     healthiness = Integer()
     ingredients = Object(dynamic="false")  # index the same content again with english analyzer
-    nutr_values_per100g = Object(dynamic="false")
+    ingredients_plain_text = Text(
+        analyzer = "english"
+    )
+    # nutr_values_per100g = Object(dynamic="false")
+    nutr_values_per100g_energy = Float()
+    nutr_values_per100g_fat = Float()
+    nutr_values_per100g_protein = Float()
+    nutr_values_per100g_salt = Float()
+    nutr_values_per100g_saturates = Float()
+    nutr_values_per100g_sugars = Float()
     URL = Text()
 
     def save(self, *args, **kwargs):
