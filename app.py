@@ -2,12 +2,13 @@ import ast
 # from curses import termattrs
 # from operator import methodcaller
 from socket import timeout
+from unittest import result
 from flask import Flask, render_template, request
 from typing import List, Dict, Tuple
-from typing import List
 from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import Match, MatchAll, ScriptScore, Ids, Query
 from elasticsearch_dsl.connections import connections
+from torch import topk
 # from torch import HOIST_CONV_PACKED_PARAMS
 
 app = Flask(__name__)
@@ -16,6 +17,12 @@ top_k = 20
 ONE_PAGE = 8 # maximum number of snippets on one page
 response = []
 docs = {}
+# ingredient_options = {"energy" : "nutr_values_per100g_energy",
+#                           "fat": "nutr_values_per100g_fat",
+#                           "protein": "nutr_values_per100g_protein",
+#                           "salt": "nutr_values_per100g_salt",
+#                           "saturates" : "nutr_values_per100g_saturates",
+#                           "sugars" : "nutr_values_per100g_sugars"}
 
 # home page
 @app.route("/")
@@ -26,6 +33,9 @@ def home():
     """
     return render_template("home.html")
 
+# ************************************************
+# tests results pages;
+# ************************************************
 
 @app.route("/tests")
 def test():
@@ -34,16 +44,56 @@ def test():
 @app.route("/tests/results", methods=["POST"])
 def test_results():
     global response
+    # global ingredient_options
+    # !!! Could we make ingredient_options global variable???
+    ingredient_options = {"energy" : "nutr_values_per100g_energy",
+                          "fat": "nutr_values_per100g_fat",
+                          "protein": "nutr_values_per100g_protein",
+                          "salt": "nutr_values_per100g_salt",
+                          "saturates" : "nutr_values_per100g_saturates",
+                          "sugars" : "nutr_values_per100g_sugars"}
     connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
     query_text = request.form["query_text"]
-    query_type_raw = request.form["query_type"]
-    query_type = int(query_type_raw) if query_type_raw != "" else 0
+    query_type = request.form["query_type"]
 
-    query = Match(title={"query": query_text})
-    response = search(index_name, query, top_k)
-    temp_result = response[:ONE_PAGE]
-    return render_template("results.html", query_text=query_text, query_type=query_type, doc=temp_result)
+    # Determines which searching algorithm to use
+    if query_type == "healthiness":  # search by healthiness
+        query = Match(title={"query": query_text})
+        response = search_by_healthiness(index_name, query, top_k)
+    elif query_type == "complexity":  # search by instruction length
+        query = Match(title={"query": query_text})
+        response = search_by_instruction_length(index_name, query, top_k)
+    elif query_type == "ingredients": # search by ingredients per 100 g
+        query = Match(ingredients_plain_text={"query": query_text}) # this matches the ingredients
+        sort_by_ingredient = ingredient_options["fat"]
+        order = "desc"
+        response = search_by_ingredients_per100g(index_name, query, top_k, sort_by_ingredient, order)
+    else:  # search by default
+        query = Match(title={"query": query_text})
+        response = search(index_name, query, top_k)
 
+    result_id = [r['id'] for r in response]
+    result_display = response[:ONE_PAGE]
+    return render_template("results.html", query_text=query_text, query_type=query_type, doc=result_display,
+        result_id=result_id, page_id=1)
+
+
+# @app.route("/tests/results/<int:page_id>", methods=["POST"])
+# def next_page(page_id):
+
+
+
+
+@app.route("/doc/<doc_id>")
+def doc(doc_id):
+    connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
+    query = Match(id={"query": doc_id})
+    doc = search(index_name, query, 1)[0]
+    return render_template("doc.html", doc=doc)
+
+# ************************************************
+# original results page defined, subject to change
+# ************************************************
 
 # result page
 @app.route("/results", methods=["POST"])

@@ -32,38 +32,17 @@
 </div>
 {% endblock %}
 
-{% block result_display %}
-
-    <p>{{ result_id  }}</p>
-
-    {% if doc|length != 0 %}
-        {% for d in doc %}
-            {% set index = (page_id - 1)*8 + loop.index - 1 %}
+{% block result_display %}    
+    <div class="container">
             <div class="container">
                 <h6>
-                    <a href="{{ url_for('doc', doc_id=result_id[index]) }}">{{d.title}}</a>
+                    <a hred="#">{{doc.title}}</a>
                 </h6>
-                <p>{{d.instructions}}</p>
-                <p>{{d.instructions_length}}</p>
+                <p>{{doc.instructions}}</p>
+                <p>{{doc.instructions_length}}</p>
                 <hr>
             </div>
-        {% endfor %}
-    {% endif %}
+    </div>
 
 {% endblock %}
 
-
-{% block next_page %}
-    {# If is last page, disable "Next Page" button #}
-    {% if isLast %}
-        <input type="submit" value="Next Page" disabled>
-    {# If not last page, increase page_id to display following matched results #}
-    {% else %}
-        <form action="{{ url_for('next_page', page_id=page_id + 1)}}" name="Next_page" method="post">
-            <input name="query_match" type="hidden" value="{{ top_doc_pair }}">
-            <input name="query_text" type="hidden" value="{{ query_text }}">
-            <input type="submit" value="Next Page">
-        </form>
-    {% endif %}
-
-{% endblock %}
