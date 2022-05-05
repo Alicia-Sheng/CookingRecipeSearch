@@ -33,9 +33,6 @@
 {% endblock %}
 
 {% block result_display %}
-
-    <p>{{ result_id  }}</p>
-
     {% if doc|length != 0 %}
         {% for d in doc %}
             {% set index = (page_id - 1)*8 + loop.index - 1 %}
@@ -43,8 +40,19 @@
                 <h6>
                     <a href="{{ url_for('doc', doc_id=result_id[index]) }}">{{d.title}}</a>
                 </h6>
-                <p>{{d.instructions}}</p>
-                <p>{{d.instructions_length}}</p>
+                <div class="container">
+                    <p>
+                    {% for index in range(d['ingredients']|length) %}
+                        <strong>{{d['ingredients'][index]}}</strong> :&nbsp; {{d['ingredients_description'][index]}}
+                    {% endfor %}
+                    </p>
+                </div>
+                <p>
+                    {% for nutr, level in d['health'].items() %}
+                        {{nutr}} :&nbsp; {{level}}
+                    {% endfor %}
+                </p>
+                <p>Complexity: {{d['complexity']}}</p>
                 <hr>
             </div>
         {% endfor %}
@@ -54,16 +62,55 @@
 
 
 {% block next_page %}
-    {# If is last page, disable "Next Page" button #}
-    {% if isLast %}
-        <input type="submit" value="Next Page" disabled>
-    {# If not last page, increase page_id to display following matched results #}
-    {% else %}
-        <form action="{{ url_for('next_page', page_id=page_id + 1)}}" name="Next_page" method="post">
-            <input name="query_match" type="hidden" value="{{ top_doc_pair }}">
-            <input name="query_text" type="hidden" value="{{ query_text }}">
-            <input type="submit" value="Next Page">
-        </form>
-    {% endif %}
+<div class="container">
+    <nav aria-label="...">
+        <ul class="pagination mx-auto justify-content-center">
+            {# Determines whether previous button disabled #}
+            {% if prev_disabled %}
+                <li class="page-item disabled">
+                    <input type="submit" value="Previous" class="btn btn-outline-secondary btn-sm">
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <form action="{{ url_for('next_page', page_id=page_id - 1)}}" name="Prev_page" method="post">
+                        <input name="results" type="hidden" value="{{ results }}">
+                        <input name="result_id" type="hidden" value="{{ result_id }}">
+                        <input name="query_text" type="hidden" value="{{ query_text }}">
+                        <input name="num_page" type="hidden" value="{{ num_page }}">
+                        <input type="submit" value="Previous" class="btn btn-outline-secondary btn-sm">
+                    </form>
+                </li>
+            {% endif %}
 
+            {% for id in range(num_page) %}
+                <li class="page-item">
+                    <form action="{{ url_for('next_page', page_id=id + 1) }}" name="Pagination" method="post">
+                        <input name="results" type="hidden" value="{{ results }}">
+                        <input name="result_id" type="hidden" value="{{ result_id }}">
+                        <input name="query_text" type="hidden" value="{{ query_text }}">
+                        <input name="num_page" type="hidden" value="{{ num_page }}">
+                        <input type="submit" value="{{ id + 1 }}" class="btn btn-outline-secondary btn-sm">
+                    </form>
+                </li>
+            {% endfor %}
+
+            {# Determines whether next button disabled #}
+            {% if next_disabled %}
+                <li class="page-item disabled">
+                    <input type="submit" value="Next" class="btn btn-outline-secondary btn-sm">
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <form action="{{ url_for('next_page', page_id=page_id + 1) }}" name="Pagination" method="post">
+                        <input name="results" type="hidden" value="{{ results }}">
+                        <input name="result_id" type="hidden" value="{{ result_id }}">
+                        <input name="query_text" type="hidden" value="{{ query_text }}">
+                        <input name="num_page" type="hidden" value="{{ num_page }}">
+                        <input type="submit" value="Next" class="btn btn-outline-secondary btn-sm">
+                    </form>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
 {% endblock %}

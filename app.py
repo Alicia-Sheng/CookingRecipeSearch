@@ -9,6 +9,7 @@ from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import Match, MatchAll, ScriptScore, Ids, Query
 from elasticsearch_dsl.connections import connections
 from torch import topk
+import json
 # from torch import HOIST_CONV_PACKED_PARAMS
 
 app = Flask(__name__)
@@ -39,7 +40,7 @@ def home():
 
 @app.route("/tests")
 def test():
-    return render_template("results.html", query_text="")
+    return render_template("home.html")
 
 @app.route("/tests/results", methods=["POST"])
 def test_results():
@@ -72,23 +73,63 @@ def test_results():
         query = Match(title={"query": query_text})
         response = search(index_name, query, top_k)
 
-    result_id = [r['id'] for r in response]
-    result_display = response[:ONE_PAGE]
-    return render_template("results.html", query_text=query_text, query_type=query_type, doc=result_display,
-        result_id=result_id, page_id=1)
+    page_id = 1  # set page id to be 1
+    result_id = [r['id'] for r in response]  # store ids of all matched data
+    num_page = int(len(result_id) / ONE_PAGE) + 1 if len(result_id) % ONE_PAGE != 0 else int(len(result_id) / ONE_PAGE)# calculates total number of pages possible
+    prev_disabled = True if page_id == 1 else False  # True if prev button disabled, false if not
+    next_disabled = True if page_id == num_page else False  # True if next button disabled, false if not
+    
+    # result_display = response[:ONE_PAGE]  # store first several data for display
+    results = []  # store processed content block
+    for result in response:
+        result = result.to_dict()
+        result_dict = {}
+        result_dict['id'] = result['id']
+        result_dict['title'] = result['title']
+        result_dict['health'] = result['fsa_lights_per100g']
+        result_dict['ingredients'] = list(result['ingredients'].keys()) if result['ingredients'] != "" else []
+        result_dict['ingredients_description'] = [val['description'] for val in result['ingredients'].values()]
+        result_dict['complexity'] = len(result['instructions'].keys())
+        results.append(result_dict)
+    result_display = results[:ONE_PAGE]
+    return render_template("results.html", query_text=query_text,
+        query_type=query_type, results=results, doc=result_display,
+        result_id=result_id, page_id=page_id, num_page=num_page,
+        prev_disabled=prev_disabled, next_disabled=next_disabled)
 
 
-# @app.route("/tests/results/<int:page_id>", methods=["POST"])
-# def next_page(page_id):
+@app.route("/tests/results/<int:page_id>", methods=["POST"])
+def next_page(page_id):
+    # read in values
+    query_text = request.form['query_text']
+    result_id_raw = request.form['result_id']
+    result_id = ast.literal_eval(result_id_raw)
+    num_page_raw = request.form['num_page']
+    num_page = int(num_page_raw) if num_page_raw != "" else 0
+    results_raw = request.form['results']
+    results = ast.literal_eval(results_raw)
 
+    prev_disabled = True if page_id == 1 else False
+    next_disabled = True if page_id == num_page else False
+    
+    start_index = (page_id - 1)*ONE_PAGE
+    end_index = None if next_disabled else page_id*ONE_PAGE
 
+    result_display = results[start_index:end_index]  # retrieve ids of doc to be displayed in this page
+
+    return render_template("results.html", query_text=query_text,
+        query_type=None, results=results, doc=result_display,
+        result_id=result_id, page_id=page_id, num_page=num_page,
+        prev_disabled=prev_disabled, next_disabled=next_disabled)
 
 
 @app.route("/doc/<doc_id>")
 def doc(doc_id):
     connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
     query = Match(id={"query": doc_id})
-    doc = search(index_name, query, 1)[0]
+    # !!! Definitely need improvement
+    doc = [_ for _ in search(index_name, query, top_k)]
+    doc = doc[0].to_dict()
     return render_template("doc.html", doc=doc)
 
 # ************************************************
