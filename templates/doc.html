@@ -33,18 +33,175 @@
 {% endblock %}
 
 {% block result_display %}    
-    <strong>{{doc}}</strong>
     <div class="container">
-            <div class="container">
-                <h6>
-                    <a href="#">{{doc.title}}</a>
-                </h6>
-                <ul>
-                    
-                </ul>
-                <p>{{doc.instructions_length}}</p>
-                <hr>
+        <h4>
+            {{doc.title}}
+        </h4>
+
+        <strong>Ingredients</strong>
+        <div class="d-flex flex-wrap overflow-scroll">
+            {% for ingredient, detail in doc['ingredients'].items() %}
+                <div class="p-3 m-3 border border-primary bg-light w-25">
+                    <strong>{{ingredient}}</strong>
+                    <hr>
+                    <div class="mb-1">
+                        <p>{{detail['description']}} || {{detail['quantity']}}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div id="instruction_display">
+            <strong>Instructions:</strong>
+            <ul>
+                {% for instruction in doc['instructions'].values() %}
+                    <li>Step {{loop.index}}: {{instruction}}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div id="health_level_display">
+            <div class="list-group">
+                {% for nutr, level in doc['fsa_lights_per100g'].items() %}
+                    {% if level == "green" %}
+                    <li class="list-group-item list-group-item-success"><strong>{{nutr}}</strong></li>
+                    {% elif level == "orange" %}
+                    <li class="list-group-item list-group-item-warning"><strong>{{nutr}}</strong></li>
+                    {% else %}
+                    <li class="list-group-item list-group-item-danger"><strong>{{nutr}}</strong></li>
+                    {% endif %}
+                {% endfor %}
             </div>
+        </div>
+
+        <div id="health_display">
+            <strong>Nutrition values per 100 gram</strong>
+            <table class="table">
+                <thead>
+                    <tr>
+                        {% for nutr in doc['nutr_values_per100g'].keys() %}
+                        <th scope="col">{{nutr}}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {% for val in doc['nutr_values_per100g'].values() %}
+                        <td>{{'%0.2f' % val|float}}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <br>
+    <hr>
+    <br>
+
+    <!-- Try out new feature; wait for selection -->
+    <div class="container">
+        <div class="accordion" id="accordionExample">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <strong>Ingredients</strong>
+                    </button>
+                </h2>
+                </div>
+            
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap overflow-scroll">
+                        {% for ingredient, detail in doc['ingredients'].items() %}
+                            <div class="p-3 m-3 border border-primary bg-light w-25">
+                                <strong>{{ingredient}}</strong>
+                                <hr>
+                                <div class="mb-1">
+                                    <p>{{detail['description']}} || {{detail['quantity']}}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <strong>Instructions</strong>
+                    </button>
+                </h2>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                <div class="card-body">
+                    <ul>
+                        {% for instruction in doc['instructions'].values() %}
+                            <li>Step {{loop.index}}: {{instruction}}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" id="headingThree">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    <strong>Health Level per nutrition</strong>
+                    </button>
+                </h2>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for nutr, level in doc['fsa_lights_per100g'].items() %}
+                            {% if level == "green" %}
+                            <li class="list-group-item list-group-item-success"><strong>{{nutr}}</strong></li>
+                            {% elif level == "orange" %}
+                            <li class="list-group-item list-group-item-warning"><strong>{{nutr}}</strong></li>
+                            {% else %}
+                            <li class="list-group-item list-group-item-danger"><strong>{{nutr}}</strong></li>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" id="headingFour">
+                    <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        <strong>Nutrition values per 100 gram</strong>
+                    </button>
+                    </h2>
+                </div>
+                <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+                    <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                {% for nutr in doc['nutr_values_per100g'].keys() %}
+                                <th scope="col">{{nutr}}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                {% for val in doc['nutr_values_per100g'].values() %}
+                                <td>{{'%0.2f' % val|float}}</td>
+                                {% endfor %}
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 {% endblock %}
