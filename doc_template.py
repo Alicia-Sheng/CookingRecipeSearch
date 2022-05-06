@@ -27,7 +27,7 @@ class BaseDoc(Document):
     ingredients_plain_text = Text(
         analyzer = "english"
     )
-    # nutr_values_per100g = Object(dynamic="false")
+    nutr_values_per100g = Object(dynamic="false")
     nutr_values_per100g_energy = Float()
     nutr_values_per100g_fat = Float()
     nutr_values_per100g_protein = Float()
