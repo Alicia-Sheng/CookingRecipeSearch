@@ -131,3 +131,4 @@ dmypy.json
 .pyre/
 *.json
 elasticsearch-7.10.2
+data
