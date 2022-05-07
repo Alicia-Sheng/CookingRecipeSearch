@@ -1,10 +1,4 @@
-{% extends "home.html" %}
-
-{% block banner_search %}
-{% endblock %}
-
-{% block cards %}
-{% endblock %}
+{% extends "layout.html" %}
 
 {% block search %}
 <div class="jumbotron jumbotron-fluid bg-info text-white text-cente">
@@ -32,6 +26,32 @@
 </div>
 {% endblock %}
 
+{% block health_search %}
+    {# if search by healthiness #}
+    {% if search_health %}
+
+    {% else %}
+    {% endif %}
+<div class="container">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab"></div>
+        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+    </div>
+</div>
+{% endblock %}
+
 {% block result_display %}
     {% if doc|length != 0 %}
         {% for d in doc %}
@@ -47,12 +67,23 @@
                     {% endfor %}
                     </p>
                 </div>
-                <p>
+
+                <div class="progress">
                     {% for nutr, level in d['health'].items() %}
-                        {{nutr}} :&nbsp; {{level}}
+                        {% if level == "green" %}
+                        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 25%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">{{nutr|capitalize}}</div>
+                        {% elif level == "orange" %}
+                        <div class="progress-bar progress-bar-striped bg-warning" role="progressbar" style="width: 25%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">{{nutr|capitalize}}</div>
+                        {% else %}
+                        <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: 25%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">{{nutr|capitalize}}</div>
+                        {% endif %}
                     {% endfor %}
-                </p>
+                </div>
+
                 <p>Complexity: {{d['complexity']}}</p>
+                <div class="progress">
+
+                </div>
                 <hr>
             </div>
         {% endfor %}

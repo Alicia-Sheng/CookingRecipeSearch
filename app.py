@@ -18,12 +18,12 @@ top_k = 20
 ONE_PAGE = 8 # maximum number of snippets on one page
 response = []
 docs = {}
-# ingredient_options = {"energy" : "nutr_values_per100g_energy",
-#                           "fat": "nutr_values_per100g_fat",
-#                           "protein": "nutr_values_per100g_protein",
-#                           "salt": "nutr_values_per100g_salt",
-#                           "saturates" : "nutr_values_per100g_saturates",
-#                           "sugars" : "nutr_values_per100g_sugars"}
+ingredient_options = {"energy" : "nutr_values_per100g_energy",
+                          "fat": "nutr_values_per100g_fat",
+                          "protein": "nutr_values_per100g_protein",
+                          "salt": "nutr_values_per100g_salt",
+                          "saturates" : "nutr_values_per100g_saturates",
+                          "sugars" : "nutr_values_per100g_sugars"}
 
 # home page
 @app.route("/")
@@ -45,14 +45,8 @@ def test():
 @app.route("/tests/results", methods=["POST"])
 def test_results():
     global response
-    # global ingredient_options
-    # !!! Could we make ingredient_options global variable???
-    ingredient_options = {"energy" : "nutr_values_per100g_energy",
-                          "fat": "nutr_values_per100g_fat",
-                          "protein": "nutr_values_per100g_protein",
-                          "salt": "nutr_values_per100g_salt",
-                          "saturates" : "nutr_values_per100g_saturates",
-                          "sugars" : "nutr_values_per100g_sugars"}
+    global ingredient_options
+
     connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
     query_text = request.form["query_text"]
     query_type = request.form["query_type"]
@@ -169,6 +163,7 @@ def results():
                           "sugars" : "nutr_values_per100g_sugars"}
     sort_by_ingredient = ingredient_options["fat"]
     order = "desc"
+    # order = "asc"
     response = search_by_ingredients_per100g(index_name, query, top_k, sort_by_ingredient, order)
     temp_result = response[:ONE_PAGE]
     return render_template("results_test.html", query=query_text, doc=temp_result)

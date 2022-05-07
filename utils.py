@@ -72,3 +72,10 @@ def load_clean_wapo_with_embedding(
 if __name__ == "__main__":
     # load_clean_wapo_with_embedding("data/recipes_with_nutritional_info.json")
     pass
+    # gen = load_clean_wapo_with_embedding("recipes_with_nutritional_info.json")
+    # j = 0
+    # for i in gen:
+    #     print(i)
+    #     j += 1
+    #     if j == 2:
+    #         break
