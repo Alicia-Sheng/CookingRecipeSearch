@@ -132,3 +132,5 @@ dmypy.json
 *.json
 elasticsearch-7.10.2
 data
+output
+

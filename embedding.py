@@ -75,5 +75,5 @@ def load_doc(
 
 
 if __name__ == "__main__":
-    load_train("data/whats-cooking/train.json")
-    pass
+    # load_train("data/whats-cooking/train.json")
+    load_doc("data/recipes_with_nutritional_info.json")
