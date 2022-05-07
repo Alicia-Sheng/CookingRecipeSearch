@@ -1,55 +1,11 @@
-{% extends "layout.html" %}
+{% extends "default_template.html" %}
 
-{% block search %}
-<div class="jumbotron jumbotron-fluid bg-info text-white text-cente">
-    <div class="container">
-        <form action="{{ url_for('test_results') }}" name="search" method="POST">
-            <div class="form-row align-items-center">
-                <div class="col-md-8 mb-3">
-                    <input type="text" class="form-control" name="query_text" placeholder="what's next" aria-label="Text input with dropdown button">
-                </div>
-                <div class="col-md-2 mb-3">
-                <label class="mr-sm-2 sr-only" for="inlineFormCustomSelect">Preference</label>
-                <select class="custom-select mr-sm-2" name="query_type" id="inlineFormCustomSelect">
-                    <option selected value="default">Default</option>
-                    <option value="healthiness">Healthiness</option>
-                    <option value="complexity">Complexity</option>
-                    <option value="ingredients">Ingredients</option>
-                </select>
-                </div>
-                <div class="col-md-2 mb-3">
-                <button type="submit" class="btn btn-outline-light">Search</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
+{% block navbar %}
+    {{super()}}
 {% endblock %}
 
-{% block health_search %}
-    {# if search by healthiness #}
-    {% if search_health %}
-
-    {% else %}
-    {% endif %}
-<div class="container">
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item">
-        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
-        </li>
-        <li class="nav-item">
-        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
-        </li>
-        <li class="nav-item">
-        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
-        </li>
-    </ul>
-    <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab"></div>
-        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
-    </div>
-</div>
+{% block search %}
+    {{super()}}
 {% endblock %}
 
 {% block result_display %}

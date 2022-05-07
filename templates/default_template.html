@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block navbar %}
+    <!-- Defines navbar of this website -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #17A2B8;">
+        <a class="navbar-brand" href="{{url_for('home')}}"><strong>Recipe Search</strong></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href="{{url_for('health_search')}}">Switch to HEALTHY search</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">About</a>
+            </li>
+          </ul>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block search %}
+    <div class="jumbotron jumbotron-fluid bg-info text-white text-cente">
+        <div class="container">
+            <form action="{{ url_for('results') }}" name="search" method="POST">
+                <div class="form-row align-items-center">
+                    <div class="col-md-8 mb-3">
+                        <input type="text" class="form-control" name="query_text" placeholder="what for today?" aria-label="Text input with dropdown button">
+                    </div>
+                    <div class="col-md-2 mb-3">
+                    <label class="mr-sm-2 sr-only" for="inlineFormCustomSelect">Preference</label>
+                    <select class="custom-select mr-sm-2" name="query_type" id="inlineFormCustomSelect">
+                        <option selected value="default">Default</option>
+                        <option value="healthiness">Healthiness</option>
+                        <option value="complexity">Complexity</option>
+                        <option value="nutrition">Nutrition</option>
+                    </select>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                    <button type="submit" class="btn btn-outline-light">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

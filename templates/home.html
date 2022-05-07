@@ -1,4 +1,8 @@
-{% extends "layout.html" %}
+{% extends "default_template.html" %}
+
+{% block navbar %}
+    {{super()}}
+{% endblock %}
 
 {% block banner_search %}
 <div class="jumbotron jumbotron-fluid bg-info text-white text-center">
@@ -7,7 +11,7 @@
 
     <div class="jumbotron jumbotron-fluid bg-info text-white text-cente">
         <div class="container">
-            <form action="{{ url_for('test_results') }}" name="search" method="POST">
+            <form action="{{ url_for('results') }}" name="search" method="POST">
                 <div class="form-row align-items-center">
                     <div class="col-md-8 mb-3">
                         <input type="text" class="form-control" name="query_text" placeholder="what for today?" aria-label="Text input with dropdown button">
@@ -18,7 +22,7 @@
                         <option selected value="default">Default</option>
                         <option value="healthiness">Healthiness</option>
                         <option value="complexity">Complexity</option>
-                        <option value="ingredients">Ingredients</option>
+                        <option value="nutrition">Nutrition</option>
                     </select>
                     </div>
                     <div class="col-md-2 mb-3">
