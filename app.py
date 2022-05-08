@@ -58,11 +58,10 @@ def health_results():
         query = Match(title={"query": query_text})
         response = search_by_healthiness(index_name, query, top_k)
     else:  # deal with specifc case for healthiness
-        order = "desc"
         query = Match(ingredients_plain_text={"query": query_text})  # this matches the ingredients
         nutr = query_type.lower()  # retrieves nutrition for search
         sort_by_ingredient = nutrition_options[nutr]
-        order = "desc"
+        order = "asc"  # sort in ascending order
         response = search_by_ingredients_per100g(index_name, query, top_k, sort_by_ingredient, order)
 
     page_id = 1  # set page id to be 1
@@ -119,17 +118,9 @@ def results():
     query_type = request.form["query_type"]
 
     # Determines which searching algorithm to use
-    if query_type == "healthiness":  # search by healthiness
-        query = Match(title={"query": query_text})
-        response = search_by_healthiness(index_name, query, top_k)
-    elif query_type == "complexity":  # search by instruction length
+    if query_type == "complexity":  # search by instruction length
         query = Match(title={"query": query_text})
         response = search_by_instruction_length(index_name, query, top_k)
-    elif query_type == "ingredients":  # search by ingredients per 100 g
-        query = Match(ingredients_plain_text={"query": query_text})  # this matches the ingredients
-        sort_by_ingredient = nutrition_options["fat"]
-        order = "desc"
-        response = search_by_ingredients_per100g(index_name, query, top_k, sort_by_ingredient, order)
     else:  # search by default
         query = Match(title={"query": query_text})
         response = search(index_name, query, top_k)
