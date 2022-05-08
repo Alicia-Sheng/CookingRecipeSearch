@@ -13,8 +13,8 @@ names = [
 #         'Nearest Neighbors',
         'AdaBoostClassifier',
         'RandomForest',
-        "Linear SVM",
-        "RBF SVM",
+        "Linear_SVM",
+        "RBF_SVM",
 #         "Decision Tree",
         "sLDA",
 #         "MLP",
@@ -84,6 +84,11 @@ for name, model in models:
     score_dict[name] = scores.mean()
     time_elapsed = time_end - time_start
     time_dict[name] = time_elapsed
+
+    tp_data = {"Average_Accuracy": scores.mean(), "Avg runtime(s)": time_elapsed}
+    df_tp = pd.DataFrame(tp_data, index=[name])
+    df_tp.to_csv("output/"+name+"_accuracy_runtime.csv")
+
     print("The average score of " + name + " is", scores.mean(), "with std of", scores.std())
     print("Time to run " + name + " is", str(time_elapsed))
     print("=" * 20)
