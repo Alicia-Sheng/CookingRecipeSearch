@@ -1,16 +1,16 @@
 import ast
-# from curses import termattrs
-# from operator import methodcaller
-from socket import timeout
-from unittest import result
 from flask import Flask, render_template, request
 from typing import List, Dict, Tuple
 from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import Match, MatchAll, ScriptScore, Ids, Query
 from elasticsearch_dsl.connections import connections
-from torch import topk
-import json
 
+# from curses import termattrs
+# from operator import methodcaller
+# from socket import timeout
+# from unittest import result
+# from torch import topk
+# import json
 # from torch import HOIST_CONV_PACKED_PARAMS
 
 app = Flask(__name__)
@@ -25,7 +25,9 @@ nutrition_options = {"energy": "nutr_values_per100g_energy",
                      "salt": "nutr_values_per100g_salt",
                      "saturates": "nutr_values_per100g_saturates",
                      "sugars": "nutr_values_per100g_sugars"}
-
+cuisine = ''
+sort = ''
+order = ''
 
 # ************************************************
 # general search pages;
@@ -43,20 +45,18 @@ def home():
 def results():
     global response
     global nutrition_options
+    global cuisine
+    global sort
+    global order
 
     connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
     query_text = request.form["query_text"]
     sort = request.form["sort"]  # sort (complexity, healthiness, fat, ...)
     cuisine = request.form["cuisine"]  # cuisine (all, chinese, ...)
-    order = request.form["order"]  # order (desc, asc) exactly match
+    order = request.form["order"]  # order (desc, asc)
 
-    # Determines which searching algorithm to use
-    if sort == "complexity":  # search by instruction length
-        query = Match(title={"query": query_text})
-        response = search_by_instruction_length(index_name, query, top_k)
-    else:  # search by default
-        query = Match(title={"query": query_text})
-        response = search(index_name, query, top_k)
+    query = Match(title={"query": query_text})
+    response = default_search(index_name, query, top_k, cuisine, sort, order)
 
     page_id = 1  # set page id to be 1
     result_id = [r['id'] for r in response]  # store ids of all matched data
@@ -110,20 +110,18 @@ def health_search():
 def health_results():
     global response
     global nutrition_options
+    global cuisine
+    global sort
+    global order
 
     connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
     query_text = request.form["query_text"]
     sort = request.form["sort"]
+    cuisine = request.form["cuisine"]  # cuisine (all, chinese, ...)
+    order = request.form["order"]  # order (desc, asc)
 
-    if sort == "General":  # deals with general case for healthiness
-        query = Match(title={"query": query_text})
-        response = search_by_healthiness(index_name, query, top_k)
-    else:  # deal with specifc case for healthiness
-        query = Match(ingredients_plain_text={"query": query_text})  # this matches the ingredients
-        nutr = sort.lower()  # retrieves nutrition for search
-        sort_by_ingredient = nutrition_options[nutr]
-        order = "asc"  # sort in ascending order
-        response = search_by_ingredients_per100g(index_name, query, top_k, sort_by_ingredient, order)
+    query = Match(title={"query": query_text})
+    response = health_search(index_name, query, top_k, cuisine, sort, order)
 
     page_id = 1  # set page id to be 1
     result_id = [r['id'] for r in response]  # store ids of all matched data
@@ -170,7 +168,7 @@ def doc(doc_id):
     connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
     query = Match(id={"query": doc_id})
     # !!! Definitely need improvement
-    doc = [_ for _ in search(index_name, query, top_k)]
+    doc = [_ for _ in search(index_name, query, top_k, cuisine, sort, order)]
     doc = doc[0].to_dict()
     return render_template("doc.html", doc=doc)
 
@@ -178,47 +176,26 @@ def doc(doc_id):
 # ************************************************
 # Helper methods
 # ************************************************
-
-def search(index: str, query: Query, top_k) -> None:
+def default_search(index: str, query: Query, top_k, cuisine, sort, order) -> None:
     s = Search(using="default", index=index)
+    if cuisine != "all":
+        s = s.filter('term', cuisine=cuisine)
     s = s.query(query)
+    if sort != "default":
+        s = s.sort({sort: {"order": order}})
     s = s[:top_k]
     r = s.execute()
     return r
 
 
-# def search(index: str, query: Query, top_k, cuisine, sort, order) -> None:
-#     s = Search(using="default", index=index)
-#     s = s.filter('term', cuisine=cuisine)
-#     s = s.query(query)
-#     s = s.sort({sort: {"order": order}})
-#     s = s[:top_k]
-#     r = s.execute()
-#     return r
-
-
-def search_by_healthiness(index: str, query: Query, top_k) -> None:
+def health_search(index: str, query: Query, top_k, cuisine, sort, order) -> None:
     s = Search(using="default", index=index)
+    if cuisine != "all":
+        s = s.filter('term', cuisine=cuisine)
     s = s.query(query)
-    s = s.sort({"healthiness": {"order": "desc"}})
-    s = s[:top_k]
-    r = s.execute()
-    return r
-
-
-def search_by_instruction_length(index: str, query: Query, top_k) -> None:
-    s = Search(using="default", index=index)
-    s = s.query(query)
-    s = s.sort({"instructions_length": {"order": "asc"}})
-    s = s[:top_k]
-    r = s.execute()
-    return r
-
-
-def search_by_ingredients_per100g(index: str, query: Query, top_k: int, sort_by_ingredient, order) -> None:
-    s = Search(using="default", index=index)
-    s = s.query(query)
-    s = s.sort({sort_by_ingredient: {"order": order}})
+    if sort != "default":
+        sort = nutrition_options[sort]
+        s = s.sort({sort: {"order": order}})
     s = s[:top_k]
     r = s.execute()
     return r

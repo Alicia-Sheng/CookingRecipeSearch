@@ -32,7 +32,7 @@ def load_clean_doc(
                 instruction_line = d["instructions"][i]
                 instruction[i] = instruction_line["text"]
             doc["instructions"] = instruction
-            doc["instructions_length"] = len(instruction)
+            doc["complexity"] = len(instruction)
             doc["fsa_lights_per100g"] = d["fsa_lights_per100g"]
             healthiness = 0
             for ingredient in d["fsa_lights_per100g"]:

@@ -21,7 +21,7 @@ class BaseDoc(Document):
     cuisine = Text()
     title = Text() # by default, Text field will be applied a standard analyzer at both index and search time
     instructions = Object(dynamic="false")
-    instructions_length = Integer()
+    complexity = Integer()
     fsa_lights_per100g = Object(dynamic="false")  # we can also set the standard analyzer explicitly
     healthiness = Integer()
     ingredients = Object(dynamic="false")  # index the same content again with english analyzer
