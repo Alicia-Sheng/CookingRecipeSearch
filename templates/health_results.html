@@ -14,7 +14,7 @@
             {% set index = (page_id - 1)*8 + loop.index - 1 %}
             <div class="container">
                 <h6>
-                    <a href="{{ url_for('doc', doc_id=result_id[index]) }}">{{d.title}}</a>
+                    <a href="{{ url_for('health_doc', doc_id=result_id[index]) }}">{{d.title}}</a>
                 </h6>
                 <div class="container">
                     <p><strong>Ingredients: </strong>
@@ -23,6 +23,8 @@
                         {% endfor %}
                     </p>
                 </div>
+
+                <p><strong>{{fat_num}}</strong></p>
 
                 <div class="container">
                     <div class="progress">
@@ -79,6 +81,9 @@
                         <input name="query_text" type="hidden" value="{{ query_text }}">
                         <input name="num_page" type="hidden" value="{{ num_page }}">
                         <input type="submit" value="{{ id + 1 }}" class="btn btn-outline-secondary btn-sm">
+
+                        <input name="fat_num" type="hidden" value="{{ fat_num }}">
+
                     </form>
                 </li>
             {% endfor %}
