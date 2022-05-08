@@ -53,7 +53,9 @@ def health_results():
     connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
     query_text = request.form["query_text"]
     query_type = request.form["query_type"]
-
+    # sort (complexity, healthiness, fat, ...)
+    # cuisine (all, chinese, ...)
+    # order (desc, asc) exactly match
     if query_type == "General":  # deals with general case for healthiness
         query = Match(title={"query": query_text})
         response = search_by_healthiness(index_name, query, top_k)
@@ -180,32 +182,46 @@ def doc(doc_id):
 # ************************************************
 
 def search(index: str, query: Query, top_k) -> None:
-    s = Search(using="default", index=index).query(query)[:top_k]  # initialize a query and return top k results
+    s = Search(using="default", index=index)
+    s = s.query(query)
+    s = s[:top_k]
     r = s.execute()
     return r
+
+
+# def search(index: str, query: Query, top_k, cuisine, sort, order) -> None:
+#     s = Search(using="default", index=index)
+#     s = s.filter('term', cuisine=cuisine)
+#     s = s.query(query)
+#     s = s.sort({sort: {"order": order}})
+#     s = s[:top_k]
+#     r = s.execute()
+#     return r
 
 
 def search_by_healthiness(index: str, query: Query, top_k) -> None:
-    s = Search(using="default", index=index).query(query)[:top_k].sort(
-        {"healthiness": {"order": "desc"}})  # initialize a query and return top five results
+    s = Search(using="default", index=index)
+    s = s.query(query)
+    s = s.sort({"healthiness": {"order": "desc"}})
+    s = s[:top_k]
     r = s.execute()
     return r
-    # for hit in r:
-    #     print(
-    #         hit.meta.id, hit.meta.score, hit.title, hit.ingredients, hit.healthiness, sep="\t"
-    #     )  # print the document id that is assigned by ES index, score and title
 
 
 def search_by_instruction_length(index: str, query: Query, top_k) -> None:
-    s = Search(using="default", index=index).query(query)[:top_k].sort(
-        {"instructions_length": {"order": "asc"}})  # initialize a query and return top five results
+    s = Search(using="default", index=index)
+    s = s.query(query)
+    s = s.sort({"instructions_length": {"order": "asc"}})
+    s = s[:top_k]
     r = s.execute()
     return r
 
 
 def search_by_ingredients_per100g(index: str, query: Query, top_k: int, sort_by_ingredient, order) -> None:
-    s = Search(using="default", index=index).query(query)[:top_k].sort(
-        {sort_by_ingredient: {"order": order}})  # initialize a query and return top five results
+    s = Search(using="default", index=index)
+    s = s.query(query)
+    s = s.sort({sort_by_ingredient: {"order": order}})
+    s = s[:top_k]
     r = s.execute()
     return r
 

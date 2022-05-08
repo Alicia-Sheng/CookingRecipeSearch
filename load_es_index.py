@@ -2,7 +2,7 @@ import argparse
 import time
 from typing import List, Dict, Union, Iterator
 from index import ESIndex
-from utils import load_clean_wapo_with_embedding
+from utils import load_clean_doc
 import logging
 
 logger = logging.getLogger(__name__)
@@ -33,11 +33,11 @@ class IndexLoader:
         )
 
     @classmethod
-    def from_docs_jsonl(cls, index_name: str, docs_jsonl: str) -> "IndexLoader":
+    def from_docs_jsonl(cls, index_name: str, docs_jsonl: str, label_csv: str) -> "IndexLoader":
         try:
-            return IndexLoader(index_name, load_clean_wapo_with_embedding(docs_jsonl))
+            return IndexLoader(index_name, load_clean_doc(docs_jsonl, label_csv))
         except FileNotFoundError:
-            raise Exception(f"Cannot find {docs_jsonl}!")
+            raise Exception(f"Cannot find {docs_jsonl}/{label_csv}!")
 
 
 def main():
@@ -49,16 +49,23 @@ def main():
         help="name of the ES index",
     )
     parser.add_argument(
-        "--path",
+        "--doc_path",
         required=True,
         type=str,
         help="path to the processed jsonline file",
     )
+    parser.add_argument(
+        "--label_path",
+        required=True,
+        type=str,
+        help="path to the label file",
+    )
 
     args = parser.parse_args()
-    idx_loader = IndexLoader.from_docs_jsonl(args.index_name, args.path)
+    idx_loader = IndexLoader.from_docs_jsonl(args.index_name, args.doc_path, args.label_path)
     idx_loader.load()
 
 
 if __name__ == "__main__":
-    main()
+    main() # python load_es_index.py --index_name cooking_recipe --doc_path data/recipes_with_nutritional_info.json --label_path output/SVM_predicted_label.csv
+

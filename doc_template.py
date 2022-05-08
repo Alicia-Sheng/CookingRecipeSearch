@@ -18,6 +18,7 @@ class BaseDoc(Document):
     """
 
     id = Keyword() # we want to treat the id as a Keyword (its value won't be tokenized or normalized).
+    cuisine = Text()
     title = Text() # by default, Text field will be applied a standard analyzer at both index and search time
     instructions = Object(dynamic="false")
     instructions_length = Integer()
