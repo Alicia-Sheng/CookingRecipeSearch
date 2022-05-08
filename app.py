@@ -27,7 +27,9 @@ nutrition_options = {"energy": "nutr_values_per100g_energy",
                      "sugars": "nutr_values_per100g_sugars"}
 
 
-# home page
+# ************************************************
+# general search pages;
+# ************************************************
 @app.route("/")
 def home():
     """
@@ -37,79 +39,6 @@ def home():
     return render_template("home.html")
 
 
-# ************************************************
-# health search pages;
-# ************************************************
-@app.route("/health_search")
-def health_search():
-    return render_template("health_search.html")
-
-
-@app.route("/health_search/results", methods=["POST"])
-def health_results():
-    global response
-    global nutrition_options
-
-    connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
-    query_text = request.form["query_text"]
-    query_type = request.form["query_type"]
-    # sort (complexity, healthiness, fat, ...)
-    # cuisine (all, chinese, ...)
-    # order (desc, asc) exactly match
-    if query_type == "General":  # deals with general case for healthiness
-        query = Match(title={"query": query_text})
-        response = search_by_healthiness(index_name, query, top_k)
-    else:  # deal with specifc case for healthiness
-        query = Match(ingredients_plain_text={"query": query_text})  # this matches the ingredients
-        nutr = query_type.lower()  # retrieves nutrition for search
-        sort_by_ingredient = nutrition_options[nutr]
-        order = "asc"  # sort in ascending order
-        response = search_by_ingredients_per100g(index_name, query, top_k, sort_by_ingredient, order)
-
-    page_id = 1  # set page id to be 1
-    result_id = [r['id'] for r in response]  # store ids of all matched data
-    num_page = int(len(result_id) / ONE_PAGE) + 1 if len(result_id) % ONE_PAGE != 0 else int(
-        len(result_id) / ONE_PAGE)  # calculates total number of pages possible
-    prev_disabled = True if page_id == 1 else False  # True if prev button disabled, false if not
-    next_disabled = True if page_id == num_page else False  # True if next button disabled, false if not
-
-    results = process_result_display(response)
-    result_display = results[:ONE_PAGE]
-    return render_template("health_results.html", query_text=query_text,
-                           query_type=query_type, results=results, doc=result_display,
-                           result_id=result_id, page_id=page_id, num_page=num_page,
-                           prev_disabled=prev_disabled, next_disabled=next_disabled)
-
-
-@app.route("/health_search/results/<int:page_id>", methods=["POST"])
-def health_next_page(page_id):
-    # read in values
-    query_text = request.form['query_text']
-    result_id_raw = request.form['result_id']
-    result_id = ast.literal_eval(result_id_raw)
-    num_page_raw = request.form['num_page']
-    num_page = int(num_page_raw) if num_page_raw != "" else 0
-    results_raw = request.form['results']
-    results = ast.literal_eval(results_raw)
-
-    prev_disabled = True if page_id == 1 else False
-    next_disabled = True if page_id == num_page else False
-
-    start_index = (page_id - 1) * ONE_PAGE
-    end_index = None if next_disabled else page_id * ONE_PAGE
-
-    result_display = results[start_index:end_index]  # retrieve ids of doc to be displayed in this page
-
-    return render_template("health_results.html", query_text=query_text,
-                           query_type=None, results=results, doc=result_display,
-                           result_id=result_id, page_id=page_id, num_page=num_page,
-                           prev_disabled=prev_disabled, next_disabled=next_disabled)
-
-
-# ************************************************
-# tests results pages;
-# ************************************************
-
 @app.route("/results", methods=["POST"])
 def results():
     global response
@@ -117,10 +46,12 @@ def results():
 
     connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
     query_text = request.form["query_text"]
-    query_type = request.form["query_type"]
+    sort = request.form["sort"]  # sort (complexity, healthiness, fat, ...)
+    cuisine = request.form["cuisine"]  # cuisine (all, chinese, ...)
+    order = request.form["order"]  # order (desc, asc) exactly match
 
     # Determines which searching algorithm to use
-    if query_type == "complexity":  # search by instruction length
+    if sort == "complexity":  # search by instruction length
         query = Match(title={"query": query_text})
         response = search_by_instruction_length(index_name, query, top_k)
     else:  # search by default
@@ -137,7 +68,7 @@ def results():
     results = process_result_display(response)
     result_display = results[:ONE_PAGE]
     return render_template("results.html", query_text=query_text,
-                           query_type=query_type, results=results, doc=result_display,
+                           sort=sort, results=results, doc=result_display,
                            result_id=result_id, page_id=page_id, num_page=num_page,
                            prev_disabled=prev_disabled, next_disabled=next_disabled)
 
@@ -162,7 +93,74 @@ def next_page(page_id):
     result_display = results[start_index:end_index]  # retrieve ids of doc to be displayed in this page
 
     return render_template("results.html", query_text=query_text,
-                           query_type=None, results=results, doc=result_display,
+                           sort=None, results=results, doc=result_display,
+                           result_id=result_id, page_id=page_id, num_page=num_page,
+                           prev_disabled=prev_disabled, next_disabled=next_disabled)
+
+
+# ************************************************
+# health search pages;
+# ************************************************
+@app.route("/health_search")
+def health_search():
+    return render_template("health_search.html")
+
+
+@app.route("/health_search/results", methods=["POST"])
+def health_results():
+    global response
+    global nutrition_options
+
+    connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
+    query_text = request.form["query_text"]
+    sort = request.form["sort"]
+
+    if sort == "General":  # deals with general case for healthiness
+        query = Match(title={"query": query_text})
+        response = search_by_healthiness(index_name, query, top_k)
+    else:  # deal with specifc case for healthiness
+        query = Match(ingredients_plain_text={"query": query_text})  # this matches the ingredients
+        nutr = sort.lower()  # retrieves nutrition for search
+        sort_by_ingredient = nutrition_options[nutr]
+        order = "asc"  # sort in ascending order
+        response = search_by_ingredients_per100g(index_name, query, top_k, sort_by_ingredient, order)
+
+    page_id = 1  # set page id to be 1
+    result_id = [r['id'] for r in response]  # store ids of all matched data
+    num_page = int(len(result_id) / ONE_PAGE) + 1 if len(result_id) % ONE_PAGE != 0 else int(
+        len(result_id) / ONE_PAGE)  # calculates total number of pages possible
+    prev_disabled = True if page_id == 1 else False  # True if prev button disabled, false if not
+    next_disabled = True if page_id == num_page else False  # True if next button disabled, false if not
+
+    results = process_result_display(response)
+    result_display = results[:ONE_PAGE]
+    return render_template("health_results.html", query_text=query_text,
+                           sort=sort, results=results, doc=result_display,
+                           result_id=result_id, page_id=page_id, num_page=num_page,
+                           prev_disabled=prev_disabled, next_disabled=next_disabled)
+
+
+@app.route("/health_search/results/<int:page_id>", methods=["POST"])
+def health_next_page(page_id):
+    # read in values
+    query_text = request.form['query_text']
+    result_id_raw = request.form['result_id']
+    result_id = ast.literal_eval(result_id_raw)
+    num_page_raw = request.form['num_page']
+    num_page = int(num_page_raw) if num_page_raw != "" else 0
+    results_raw = request.form['results']
+    results = ast.literal_eval(results_raw)
+
+    prev_disabled = True if page_id == 1 else False
+    next_disabled = True if page_id == num_page else False
+
+    start_index = (page_id - 1) * ONE_PAGE
+    end_index = None if next_disabled else page_id * ONE_PAGE
+
+    result_display = results[start_index:end_index]  # retrieve ids of doc to be displayed in this page
+
+    return render_template("health_results.html", query_text=query_text,
+                           sort=None, results=results, doc=result_display,
                            result_id=result_id, page_id=page_id, num_page=num_page,
                            prev_disabled=prev_disabled, next_disabled=next_disabled)
 
