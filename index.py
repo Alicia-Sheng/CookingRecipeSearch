@@ -45,6 +45,7 @@ class ESIndex(object):
         for i, doc in enumerate(docs):
             es_doc = BaseDoc(_id=i)
             es_doc.id = doc["id"]
+            es_doc.cuisine = doc["cuisine"]
             es_doc.title = doc["title"]
             es_doc.instructions = doc["instructions"]
             es_doc.instructions_length = doc["instructions_length"]
