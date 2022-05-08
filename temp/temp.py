@@ -10,14 +10,6 @@ data_example = """{'id': '000095fc1d', 'title': 'Yogurt Parfaits', 'instructions
  'salt': 0.05597816738985967, 'saturates': 0.36534716195613937, 'sugars': 5.08634103436144}, 
  'url': 'http://tastykitchen.com/recipes/breakfastbrunch/yogurt-parfaits/'}"""
 
-data = ast.literal_eval(data_example)
-print(data['ingredients'].keys())
-a = dict()
-print(a.keys())
-print(type(a.keys()))
-with open('temp_data_json.json', 'w') as f:
-    json.dump(data, f, indent=4, separators=(',', ':'))
-f.close()
 
 
 # ************************************************

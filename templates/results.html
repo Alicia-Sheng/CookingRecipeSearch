@@ -17,28 +17,35 @@
                     <a href="{{ url_for('doc', doc_id=result_id[index]) }}">{{d.title}}</a>
                 </h6>
                 <div class="container">
-                    <p>
+                    <!-- <p>
                     {% for index in range(d['ingredients']|length) %}
-                        <strong>{{d['ingredients'][index]}}</strong> :&nbsp; {{d['ingredients_description'][index]}}
+                        <strong>{{d['ingredients'][index]}}</strong>: {{d['ingredients_description'][index]}}
                     {% endfor %}
+                    </p> -->
+                    <p><strong>Ingredients: </strong>
+                        {% for ingredient in d['ingredients'] %}
+                            {{ingredient}} ||
+                        {% endfor %}
                     </p>
                 </div>
 
-                <div class="progress">
-                    {% for nutr, level in d['health'].items() %}
-                        {% if level == "green" %}
-                        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 25%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">{{nutr|capitalize}}</div>
-                        {% elif level == "orange" %}
-                        <div class="progress-bar progress-bar-striped bg-warning" role="progressbar" style="width: 25%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">{{nutr|capitalize}}</div>
-                        {% else %}
-                        <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: 25%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">{{nutr|capitalize}}</div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-
-                <p>Complexity: {{d['complexity']}}</p>
-                <div class="progress">
-
+                <div class="container">
+                    <div class="progress">
+                        {% for nutr, level in d['health'].items() %}
+                            {% if level == "green" %}
+                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 25%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">{{nutr|capitalize}}</div>
+                            {% elif level == "orange" %}
+                            <div class="progress-bar progress-bar-striped bg-warning" role="progressbar" style="width: 25%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">{{nutr|capitalize}}</div>
+                            {% else %}
+                            <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: 25%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">{{nutr|capitalize}}</div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <br>
+                    <div class="progress">
+                        {% set progress_ratio = 100 * d['complexity'] / 10 %}
+                        <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: {{progress_ratio}}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">Complexity</div>
+                    </div>
                 </div>
                 <hr>
             </div>

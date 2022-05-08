@@ -10,20 +10,22 @@ from elasticsearch_dsl.query import Match, MatchAll, ScriptScore, Ids, Query
 from elasticsearch_dsl.connections import connections
 from torch import topk
 import json
+
 # from torch import HOIST_CONV_PACKED_PARAMS
 
 app = Flask(__name__)
-index_name= "cooking_recipe"
+index_name = "cooking_recipe"
 top_k = 20
-ONE_PAGE = 8 # maximum number of snippets on one page
+ONE_PAGE = 8  # maximum number of snippets on one page
 response = []
 docs = {}
-nutrition_options = {"energy" : "nutr_values_per100g_energy",
-                        "fat": "nutr_values_per100g_fat",
-                        "protein": "nutr_values_per100g_protein",
-                        "salt": "nutr_values_per100g_salt",
-                        "saturates" : "nutr_values_per100g_saturates",
-                        "sugars" : "nutr_values_per100g_sugars"}
+nutrition_options = {"energy": "nutr_values_per100g_energy",
+                     "fat": "nutr_values_per100g_fat",
+                     "protein": "nutr_values_per100g_protein",
+                     "salt": "nutr_values_per100g_salt",
+                     "saturates": "nutr_values_per100g_saturates",
+                     "sugars": "nutr_values_per100g_sugars"}
+
 
 # home page
 @app.route("/")
@@ -42,6 +44,7 @@ def home():
 def health_search():
     return render_template("health_search.html")
 
+
 @app.route("/health_search/results", methods=["POST"])
 def health_results():
     global response
@@ -56,24 +59,26 @@ def health_results():
         response = search_by_healthiness(index_name, query, top_k)
     else:  # deal with specifc case for healthiness
         order = "desc"
-        query = Match(ingredients_plain_text={"query": query_text}) # this matches the ingredients
+        query = Match(ingredients_plain_text={"query": query_text})  # this matches the ingredients
         nutr = query_type.lower()  # retrieves nutrition for search
         sort_by_ingredient = nutrition_options[nutr]
         order = "desc"
         response = search_by_ingredients_per100g(index_name, query, top_k, sort_by_ingredient, order)
-    
+
     page_id = 1  # set page id to be 1
     result_id = [r['id'] for r in response]  # store ids of all matched data
-    num_page = int(len(result_id) / ONE_PAGE) + 1 if len(result_id) % ONE_PAGE != 0 else int(len(result_id) / ONE_PAGE)# calculates total number of pages possible
+    num_page = int(len(result_id) / ONE_PAGE) + 1 if len(result_id) % ONE_PAGE != 0 else int(
+        len(result_id) / ONE_PAGE)  # calculates total number of pages possible
     prev_disabled = True if page_id == 1 else False  # True if prev button disabled, false if not
     next_disabled = True if page_id == num_page else False  # True if next button disabled, false if not
 
-    results = process_result_display(response)    
+    results = process_result_display(response)
     result_display = results[:ONE_PAGE]
     return render_template("health_results.html", query_text=query_text,
-        query_type=query_type, results=results, doc=result_display,
-        result_id=result_id, page_id=page_id, num_page=num_page,
-        prev_disabled=prev_disabled, next_disabled=next_disabled)
+                           query_type=query_type, results=results, doc=result_display,
+                           result_id=result_id, page_id=page_id, num_page=num_page,
+                           prev_disabled=prev_disabled, next_disabled=next_disabled)
+
 
 @app.route("/health_search/results/<int:page_id>", methods=["POST"])
 def health_next_page(page_id):
@@ -88,16 +93,17 @@ def health_next_page(page_id):
 
     prev_disabled = True if page_id == 1 else False
     next_disabled = True if page_id == num_page else False
-    
-    start_index = (page_id - 1)*ONE_PAGE
-    end_index = None if next_disabled else page_id*ONE_PAGE
+
+    start_index = (page_id - 1) * ONE_PAGE
+    end_index = None if next_disabled else page_id * ONE_PAGE
 
     result_display = results[start_index:end_index]  # retrieve ids of doc to be displayed in this page
 
     return render_template("health_results.html", query_text=query_text,
-        query_type=None, results=results, doc=result_display,
-        result_id=result_id, page_id=page_id, num_page=num_page,
-        prev_disabled=prev_disabled, next_disabled=next_disabled)
+                           query_type=None, results=results, doc=result_display,
+                           result_id=result_id, page_id=page_id, num_page=num_page,
+                           prev_disabled=prev_disabled, next_disabled=next_disabled)
+
 
 # ************************************************
 # tests results pages;
@@ -119,8 +125,8 @@ def results():
     elif query_type == "complexity":  # search by instruction length
         query = Match(title={"query": query_text})
         response = search_by_instruction_length(index_name, query, top_k)
-    elif query_type == "ingredients": # search by ingredients per 100 g
-        query = Match(ingredients_plain_text={"query": query_text}) # this matches the ingredients
+    elif query_type == "ingredients":  # search by ingredients per 100 g
+        query = Match(ingredients_plain_text={"query": query_text})  # this matches the ingredients
         sort_by_ingredient = nutrition_options["fat"]
         order = "desc"
         response = search_by_ingredients_per100g(index_name, query, top_k, sort_by_ingredient, order)
@@ -130,16 +136,17 @@ def results():
 
     page_id = 1  # set page id to be 1
     result_id = [r['id'] for r in response]  # store ids of all matched data
-    num_page = int(len(result_id) / ONE_PAGE) + 1 if len(result_id) % ONE_PAGE != 0 else int(len(result_id) / ONE_PAGE)# calculates total number of pages possible
+    num_page = int(len(result_id) / ONE_PAGE) + 1 if len(result_id) % ONE_PAGE != 0 else int(
+        len(result_id) / ONE_PAGE)  # calculates total number of pages possible
     prev_disabled = True if page_id == 1 else False  # True if prev button disabled, false if not
     next_disabled = True if page_id == num_page else False  # True if next button disabled, false if not
 
-    results = process_result_display(response)    
+    results = process_result_display(response)
     result_display = results[:ONE_PAGE]
     return render_template("results.html", query_text=query_text,
-        query_type=query_type, results=results, doc=result_display,
-        result_id=result_id, page_id=page_id, num_page=num_page,
-        prev_disabled=prev_disabled, next_disabled=next_disabled)
+                           query_type=query_type, results=results, doc=result_display,
+                           result_id=result_id, page_id=page_id, num_page=num_page,
+                           prev_disabled=prev_disabled, next_disabled=next_disabled)
 
 
 @app.route("/results/<int:page_id>", methods=["POST"])
@@ -155,16 +162,16 @@ def next_page(page_id):
 
     prev_disabled = True if page_id == 1 else False
     next_disabled = True if page_id == num_page else False
-    
-    start_index = (page_id - 1)*ONE_PAGE
-    end_index = None if next_disabled else page_id*ONE_PAGE
+
+    start_index = (page_id - 1) * ONE_PAGE
+    end_index = None if next_disabled else page_id * ONE_PAGE
 
     result_display = results[start_index:end_index]  # retrieve ids of doc to be displayed in this page
 
     return render_template("results.html", query_text=query_text,
-        query_type=None, results=results, doc=result_display,
-        result_id=result_id, page_id=page_id, num_page=num_page,
-        prev_disabled=prev_disabled, next_disabled=next_disabled)
+                           query_type=None, results=results, doc=result_display,
+                           result_id=result_id, page_id=page_id, num_page=num_page,
+                           prev_disabled=prev_disabled, next_disabled=next_disabled)
 
 
 @app.route("/doc/<doc_id>")
@@ -176,6 +183,7 @@ def doc(doc_id):
     doc = doc[0].to_dict()
     return render_template("doc.html", doc=doc)
 
+
 # ************************************************
 # Helper methods
 # ************************************************
@@ -185,8 +193,10 @@ def search(index: str, query: Query, top_k) -> None:
     r = s.execute()
     return r
 
+
 def search_by_healthiness(index: str, query: Query, top_k) -> None:
-    s = Search(using="default", index=index).query(query)[:top_k].sort({"healthiness": {"order": "desc"}})  # initialize a query and return top five results
+    s = Search(using="default", index=index).query(query)[:top_k].sort(
+        {"healthiness": {"order": "desc"}})  # initialize a query and return top five results
     r = s.execute()
     return r
     # for hit in r:
@@ -194,15 +204,20 @@ def search_by_healthiness(index: str, query: Query, top_k) -> None:
     #         hit.meta.id, hit.meta.score, hit.title, hit.ingredients, hit.healthiness, sep="\t"
     #     )  # print the document id that is assigned by ES index, score and title
 
+
 def search_by_instruction_length(index: str, query: Query, top_k) -> None:
-    s = Search(using="default", index=index).query(query)[:top_k].sort({"instructions_length": {"order": "asc"}})  # initialize a query and return top five results
+    s = Search(using="default", index=index).query(query)[:top_k].sort(
+        {"instructions_length": {"order": "asc"}})  # initialize a query and return top five results
     r = s.execute()
     return r
 
+
 def search_by_ingredients_per100g(index: str, query: Query, top_k: int, sort_by_ingredient, order) -> None:
-    s = Search(using="default", index=index).query(query)[:top_k].sort({sort_by_ingredient: {"order": order}})  # initialize a query and return top five results
+    s = Search(using="default", index=index).query(query)[:top_k].sort(
+        {sort_by_ingredient: {"order": order}})  # initialize a query and return top five results
     r = s.execute()
     return r
+
 
 def process_result_display(response: List) -> List:
     results = []  # store processed content block
@@ -217,6 +232,7 @@ def process_result_display(response: List) -> List:
         result_dict['complexity'] = len(result['instructions'].keys())
         results.append(result_dict)
     return results
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
