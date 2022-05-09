@@ -166,19 +166,9 @@ def health_next_page(page_id):
 @app.route("/doc/<doc_id>")
 def doc(doc_id):
     connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
-    query = Match(id={"query": doc_id})
-    # !!! Definitely need improvement
-    doc = [_ for _ in default_search(index_name, query, top_k, cuisine, sort, order)]
-    doc = doc[0].to_dict()
-    return render_template("doc.html", doc=doc)
-
-@app.route("/health_doc/<doc_id>")
-def health_doc(doc_id):
-    connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
-    query = Match(id={"query": doc_id})
-    # !!! Definitely need improvement
-    doc = [_ for _ in health_search(index_name, query, top_k, cuisine, sort, order)]
-    doc = doc[0].to_dict()
+    s = Search(using="default", index=index_name).query(Match(id={"query": doc_id}))
+    r = s.execute()
+    doc = r[0].to_dict()
     return render_template("doc.html", doc=doc)
 
 
