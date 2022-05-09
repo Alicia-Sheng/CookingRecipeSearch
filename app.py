@@ -135,7 +135,7 @@ def health_results():
         search_strategy['query']['bool']['must'].append(nutr_strategy)
 
     if nutr_num_search:
-        response = health_nutr_num_search(index_name, search_strategy, top_k, cuisine, sort, order)
+        response = health_nutr_num_search(index_name, search_strategy, top_k, cuisine, sort, order, query_text)
     else:
         query = Match(title={"query": query_text})
         response = health_search_algo(index_name, query, top_k, cuisine, sort, order, query_text)
@@ -247,7 +247,9 @@ def health_search_algo(index: str, query: Query, top_k: int, cuisine: str, sort:
     return r
 
 
-def health_nutr_num_search(index: str, strategy: Dict, top_k: int, cuisine: str, sort: str, order: str) -> None:
+def health_nutr_num_search(index: str, strategy: Dict, top_k: int, cuisine: str, sort: str, order: str, query_text: str) -> None:
+    if query_text == "":
+        strategy["query"]["bool"]["must"].pop(0)  # remove search by query
     s = Search.from_dict(strategy)
     if cuisine != "all":
         s = s.filter('term', cuisine=cuisine)
