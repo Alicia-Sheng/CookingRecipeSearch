@@ -167,7 +167,7 @@ def health_doc(doc_id):
 # ************************************************
 # Helper methods
 # ************************************************
-def default_search(index: str, query: Query, top_k, cuisine, sort, order) -> None:
+def default_search(index: str, query: Query, top_k: int, cuisine: str, sort: str, order: str) -> None:
     s = Search(using="default", index=index)
     if cuisine != "all":
         s = s.filter('term', cuisine=cuisine)
@@ -179,7 +179,7 @@ def default_search(index: str, query: Query, top_k, cuisine, sort, order) -> Non
     return r
 
 
-def health_search(index: str, query: Query, top_k, cuisine, sort, order) -> None:
+def health_search(index: str, query: Query, top_k: int, cuisine: str, sort: str, order: str) -> None:
     s = Search(using="default", index=index)
     if cuisine != "all":
         s = s.filter('term', cuisine=cuisine)
