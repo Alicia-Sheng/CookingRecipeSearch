@@ -5,7 +5,7 @@ import csv
 
 
 def load_clean_doc(
-    doc_path: Union[str, os.PathLike], label_path: Union[str, os.PathLike]
+        doc_path: Union[str, os.PathLike], label_path: Union[str, os.PathLike]
 ) -> Generator[Dict, None, None]:
     """
     load wapo docs as a generator
@@ -16,7 +16,7 @@ def load_clean_doc(
     data = json.load(f)
     with open(label_path, newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
-        next(reader) # remove the header
+        next(reader)  # remove the header
         for d in data:
             doc = dict()
             doc["id"] = d["id"]
@@ -82,12 +82,17 @@ def load_clean_doc(
 if __name__ == "__main__":
     # doc_path = "data/recipes_with_nutritional_info.json"
     # label_path = "output/SVM_predicted_label.csv"
-    # load_clean_doc(doc_path, label_path)
-    # gen = load_clean_doc("recipes_with_nutritional_info.json")
+    # gen = load_clean_doc(doc_path, label_path)
+    # result = []
     # j = 0
     # for i in gen:
     #     print(i)
+    #     result.append(i)
     #     j += 1
     #     if j == 2:
     #         break
+    #
+    # with open("temp/new_purified_data.json", "w") as f:
+    #     json.dump(result, f, indent=4, separators=(',', ':'))
+    # f.close()
     pass

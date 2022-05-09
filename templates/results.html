@@ -16,12 +16,12 @@
                 <h6>
                     <a href="{{ url_for('doc', doc_id=result_id[index]) }}">{{d.title}}</a>
                 </h6>
+
                 <div class="container">
-                    <!-- <p>
-                    {% for index in range(d['ingredients']|length) %}
-                        <strong>{{d['ingredients'][index]}}</strong>: {{d['ingredients_description'][index]}}
-                    {% endfor %}
-                    </p> -->
+                    <p><strong>{{d['cuisine']}} cuisine</strong></p>
+                </div>
+
+                <div class="container">
                     <p><strong>Ingredients: </strong>
                         {% for ingredient in d['ingredients'] %}
                             {{ingredient}} ||
