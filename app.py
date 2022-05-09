@@ -5,13 +5,6 @@ from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import Match, MatchAll, ScriptScore, Ids, Query
 from elasticsearch_dsl.connections import connections
 
-# from curses import termattrs
-# from operator import methodcaller
-# from socket import timeout
-# from unittest import result
-# from torch import topk
-# import json
-# from torch import HOIST_CONV_PACKED_PARAMS
 
 app = Flask(__name__)
 index_name = "cooking_recipe"
@@ -25,9 +18,7 @@ nutrition_options = {"energy": "nutr_values_per100g_energy",
                      "salt": "nutr_values_per100g_salt",
                      "saturates": "nutr_values_per100g_saturates",
                      "sugars": "nutr_values_per100g_sugars"}
-cuisine = ''
-sort = ''
-order = ''
+
 
 # ************************************************
 # general search pages;
