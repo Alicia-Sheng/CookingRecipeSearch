@@ -6,10 +6,10 @@ from elasticsearch_dsl.query import Match, MatchAll, ScriptScore, Ids, Query
 from elasticsearch_dsl.connections import connections
 
 app = Flask(__name__)
-index_name = "cooking_recipe"
-top_k = 20
+index_name = "cooking_recipe"  # name of es index
+top_k = 20  # define number of documents demonstrated
 ONE_PAGE = 8  # maximum number of snippets on one page
-response = []
+response = []  # stores
 docs = {}
 nutrition_options = {"energy": "nutr_values_per100g_energy",
                      "fat": "nutr_values_per100g_fat",
