@@ -44,10 +44,6 @@ def home():
 @app.route("/results", methods=["POST"])
 def results():
     global response
-    global nutrition_options
-    global cuisine
-    global sort
-    global order
 
     connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
     query_text = request.form["query_text"]
@@ -109,10 +105,6 @@ def health_search():
 @app.route("/health_search/results", methods=["POST"])
 def health_results():
     global response
-    global nutrition_options
-    global cuisine
-    global sort
-    global order
 
     connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
     query_text = request.form["query_text"]
