@@ -3,7 +3,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 **/.DS_Store
-*.json
 *.idea
 # C extensions
 *.so
@@ -130,7 +129,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-*.json
 elasticsearch-7.10.2
 data
 output
