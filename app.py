@@ -1,6 +1,6 @@
 import ast
 from flask import Flask, render_template, request
-from typing import List, Dict, Tuple
+from typing import List
 from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import Match, MatchAll, ScriptScore, Ids, Query
 from elasticsearch_dsl.connections import connections
