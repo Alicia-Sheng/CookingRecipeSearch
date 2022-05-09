@@ -24,8 +24,7 @@
         <div class="col-10">
             <div data-spy="scroll" data-target="#list-example" data-offset="0" class="scrollspy-example">
 
-                <h2 id="list-item-0">{{doc['title']}}</h2>
-
+                <h2 id="list-item-0">{{doc['title']}} ({{doc['cuisine']}} cuisine)</h2>
                 <br><hr><br>
 
                 <h4 id="list-item-1">Ingredients</h4>
@@ -72,7 +71,7 @@
                     <thead>
                     <tr>
                         {% for nutr in doc['nutr_values_per100g'].keys() %}
-                        <th scope="col">{{nutr}}</th>
+                        <th scope="col">{{nutr | capitalize}}</th>
                         {% endfor %}
                     </tr>
                     </thead>

@@ -77,6 +77,86 @@
                     <button type="submit" class="btn btn-outline-light">Search</button>
                 </div>
             </div>
+
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-info">
+                    <h6 class="panel-heading">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#advancedSearch" style="color: white;">
+                            Advanced & Customized Search
+                        </a>
+                    </h6>
+                </div>
+            </div>
+            <br>
+            <div id="advancedSearch" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <div class="form-group row">
+                        <label for="inputEnergyMin" class="col-sm-4 col-form-label">Energy (kcal per 100 gram): &emsp;from min value</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control" id="inputEnergyMin" name="energy_min" value="0" step="10" min="0">
+                        </div>
+                        <label for="inputEnergyMax" class="col-sm-2 col-form-label">to max value</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control" id="inputEnergyMax" name="energy_max" value="0" step="20" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="inputFatMin" class="col-sm-4 col-form-label">Fat (grams per 100 gram): &emsp;&emsp;from min value</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control" id="inputFatMin" name="fat_min" value="0" step="1" min="0">
+                        </div>
+                        <label for="inputFatMax" class="col-sm-2 col-form-label">to max value</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control" id="inputFatMax" name="fat_max" value="0" step="1" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="inputProteinMin" class="col-sm-4 col-form-label">Protein (grams per 100 gram): &emsp;&emsp;from min value</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control" id="inputProteinMin" name="protein_min" value="0" step="1" min="0">
+                        </div>
+                        <label for="inputProteinMax" class="col-sm-2 col-form-label">to max value</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control" id="inputProteinMax" name="protein_max" value="0" step="1" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="inputSaltMin" class="col-sm-4 col-form-label">Salt (grams per 100 gram): &emsp;&emsp;from min value</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control" id="inputSaltMin" name="salt_min" value="0" step="0.1" min="0">
+                        </div>
+                        <label for="inputSaltMax" class="col-sm-2 col-form-label">to max value</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control" id="inputSaltMax" name="salt_max" value="0" step="0.1" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="inputSaturatesMin" class="col-sm-4 col-form-label">Saturates (grams per 100 gram): &emsp;&emsp;from min value</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control" id="inputSaturatesMin" name="saturates_min" value="0" step="0.1" min="0">
+                        </div>
+                        <label for="inputSaturatesMax" class="col-sm-2 col-form-label">to max value</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control" id="inputSaturatesMax" name="saturates_max" value="0" step="0.1" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="inputSugarsMin" class="col-sm-4 col-form-label">Sugars (grams per 100 gram): &emsp;&emsp;from min value</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control" id="inputSugarsMin" name="sugars_min" value="0" step="0.5" min="0">
+                        </div>
+                        <label for="inputSugarsMax" class="col-sm-2 col-form-label">to max value</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control" id="inputSugarsMax" name="sugars_max" value="0" step="0.5" min="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
 </div>

@@ -1,10 +1,9 @@
 import ast
 from flask import Flask, render_template, request
-from typing import List
+from typing import List, Dict
 from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import Match, MatchAll, ScriptScore, Ids, Query
 from elasticsearch_dsl.connections import connections
-
 
 app = Flask(__name__)
 index_name = "cooking_recipe"
@@ -42,7 +41,10 @@ def results():
     cuisine = request.form["cuisine"]  # cuisine (all, chinese, ...)
     order = request.form["order"]  # order (desc, asc)
 
-    query = Match(title={"query": query_text})
+    if sort == "ingredients":
+        query = Match(ingredients_plain_text={"query": query_text})
+    else:
+        query = Match(title={"query": query_text})
     response = default_search(index_name, query, top_k, cuisine, sort, order)
 
     page_id = 1  # set page id to be 1
@@ -112,8 +114,31 @@ def health_results():
     cuisine = request.form["cuisine"]  # cuisine (all, chinese, ...)
     order = request.form["order"]  # order (desc, asc)
 
-    query = Match(title={"query": query_text})
-    response = health_search(index_name, query, top_k, cuisine, sort, order)
+    nutr_num_search = False  # determines if user use advanced nutr num search
+    nutr_num = {}
+    match_dict = {"match": {"title": query_text}}
+    search_strategy = {'query': {}}
+    search_strategy['query']['bool'] = {}
+    search_strategy['query']['bool']['must'] = []
+    search_strategy['query']['bool']['must'].append(match_dict)
+    for nutr, key in nutrition_options.items():
+        nutr_min = int(request.form[nutr + "_min"])
+        nutr_max = int(request.form[nutr + "_max"])
+        nutr_num['nutr'] = tuple([nutr_min, nutr_max])
+        nutr_gt_lt = {key: {"gte": nutr_min}}
+        if nutr_min != 0:
+            nutr_num_search = True  # if at least one min value has been set, then set to True
+        if nutr_max != 0:  # if haven't set value for max
+            nutr_gt_lt[key]["lte"] = nutr_max
+            nutr_num_search = True  # if at least one max value has been set, then set to True
+        nutr_strategy = {'range': nutr_gt_lt}
+        search_strategy['query']['bool']['must'].append(nutr_strategy)
+
+    if nutr_num_search:
+        response = health_nutr_num_search(index_name, search_strategy, top_k, cuisine, sort, order)
+    else:
+        query = Match(title={"query": query_text})
+        response = health_search_algo(index_name, query, top_k, cuisine, sort, order)
 
     page_id = 1  # set page id to be 1
     result_id = [r['id'] for r in response]  # store ids of all matched data
@@ -128,6 +153,34 @@ def health_results():
                            sort=sort, results=results, doc=result_display,
                            result_id=result_id, page_id=page_id, num_page=num_page,
                            prev_disabled=prev_disabled, next_disabled=next_disabled)
+
+
+# @app.route("/health_search/results", methods=["POST"])
+# def health_results():
+#     global response
+#
+#     connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
+#     query_text = request.form["query_text"]
+#     sort = request.form["sort"]
+#     cuisine = request.form["cuisine"]  # cuisine (all, chinese, ...)
+#     order = request.form["order"]  # order (desc, asc)
+#
+#     query = Match(title={"query": query_text})
+#     response = health_search_algo(index_name, query, top_k, cuisine, sort, order)
+#
+#     page_id = 1  # set page id to be 1
+#     result_id = [r['id'] for r in response]  # store ids of all matched data
+#     num_page = int(len(result_id) / ONE_PAGE) + 1 if len(result_id) % ONE_PAGE != 0 else int(
+#         len(result_id) / ONE_PAGE)  # calculates total number of pages possible
+#     prev_disabled = True if page_id == 1 else False  # True if prev button disabled, false if not
+#     next_disabled = True if page_id == num_page else False  # True if next button disabled, false if not
+#
+#     results = process_result_display(response)
+#     result_display = results[:ONE_PAGE]
+#     return render_template("health_results.html", query_text=query_text,
+#                            sort=sort, results=results, doc=result_display,
+#                            result_id=result_id, page_id=page_id, num_page=num_page,
+#                            prev_disabled=prev_disabled, next_disabled=next_disabled)
 
 
 @app.route("/health_search/results/<int:page_id>", methods=["POST"])
@@ -172,18 +225,30 @@ def default_search(index: str, query: Query, top_k: int, cuisine: str, sort: str
     if cuisine != "all":
         s = s.filter('term', cuisine=cuisine)
     s = s.query(query)
-    if sort != "default":
+    if sort != "default" and sort != "ingredients":
         s = s.sort({sort: {"order": order}})
     s = s[:top_k]
     r = s.execute()
     return r
 
 
-def health_search(index: str, query: Query, top_k: int, cuisine: str, sort: str, order: str) -> None:
+def health_search_algo(index: str, query: Query, top_k: int, cuisine: str, sort: str, order: str) -> None:
     s = Search(using="default", index=index)
     if cuisine != "all":
         s = s.filter('term', cuisine=cuisine)
     s = s.query(query)
+    if sort != "default":
+        sort = nutrition_options[sort]
+        s = s.sort({sort: {"order": order}})
+    s = s[:top_k]
+    r = s.execute()
+    return r
+
+
+def health_nutr_num_search(index: str, strategy: Dict, top_k: int, cuisine: str, sort: str, order: str) -> None:
+    s = Search.from_dict(strategy)
+    if cuisine != "all":
+        s = s.filter('term', cuisine=cuisine)
     if sort != "default":
         sort = nutrition_options[sort]
         s = s.sort({sort: {"order": order}})
