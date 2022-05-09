@@ -85,6 +85,15 @@ def next_page(page_id):
                            prev_disabled=prev_disabled, next_disabled=next_disabled)
 
 
+@app.route("/doc/<doc_id>")
+def doc(doc_id):
+    connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
+    s = Search(using="default", index=index_name).query(Match(id={"query": doc_id}))
+    r = s.execute()
+    doc = r[0].to_dict()
+    return render_template("doc.html", doc=doc)
+
+
 # ************************************************
 # health search pages;
 # ************************************************
@@ -146,13 +155,13 @@ def health_next_page(page_id):
                            prev_disabled=prev_disabled, next_disabled=next_disabled)
 
 
-@app.route("/doc/<doc_id>")
-def doc(doc_id):
+@app.route("/health_search/doc/<doc_id>")
+def health_doc(doc_id):
     connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
     s = Search(using="default", index=index_name).query(Match(id={"query": doc_id}))
     r = s.execute()
     doc = r[0].to_dict()
-    return render_template("doc.html", doc=doc)
+    return render_template("health_doc.html", doc=doc)
 
 
 # ************************************************
@@ -194,6 +203,16 @@ def process_result_display(response: List) -> List:
         result_dict['ingredients'] = list(result['ingredients'].keys()) if result['ingredients'] != "" else []
         result_dict['ingredients_description'] = [val['description'] for val in result['ingredients'].values()]
         result_dict['complexity'] = len(result['instructions'].keys())
+        raw_cuisine = result['cuisine']
+        # process cuisine input
+        final_cuisine = raw_cuisine
+        if raw_cuisine == "southern_us":
+            final_cuisine = "Southern US"
+        elif raw_cuisine == "cajun_creole":
+            final_cuisine = "Cajun Creole"
+        else:
+            final_cuisine = final_cuisine.capitalize()
+        result_dict['cuisine'] = final_cuisine
         results.append(result_dict)
     return results
 
