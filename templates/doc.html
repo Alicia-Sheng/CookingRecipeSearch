@@ -28,7 +28,7 @@
                 <div class="d-flex flex-wrap overflow-scroll">
                     {% for ingredient, detail in doc['ingredients'].items() %}
                     <div class="p-3 m-3 border border-primary bg-light w-25">
-                        <strong>{{ingredient}}</strong>
+                        <strong>{{ingredient | capitalize}}</strong>
                         <hr>
                         <div class="mb-1">
                             <p>{{detail['description']}} || {{detail['quantity']}}</p>
