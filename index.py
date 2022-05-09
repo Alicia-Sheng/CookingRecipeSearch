@@ -60,7 +60,7 @@ class ESIndex(object):
             es_doc.nutr_values_per100g_salt = doc["nutr_values_per100g_salt"]
             es_doc.nutr_values_per100g_saturates = doc["nutr_values_per100g_saturates"]
             es_doc.nutr_values_per100g_sugars = doc["nutr_values_per100g_sugars"]
-            es_doc.URL = doc["url"]
+            es_doc.url = doc["url"]
             yield es_doc
 
     def load(self, docs: Union[Iterator[Dict], Sequence[Dict]]):

@@ -75,5 +75,7 @@ def load_doc(
 
 
 if __name__ == "__main__":
+    # python -m embedding_service.server --embedding sbert --model msmarco-distilbert-base-v3
     # load_train("data/whats-cooking/train.json")
-    load_doc("data/recipes_with_nutritional_info.json")
+    # load_doc("data/recipes_with_nutritional_info.json")
+    pass

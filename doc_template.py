@@ -35,7 +35,7 @@ class BaseDoc(Document):
     nutr_values_per100g_salt = Float()
     nutr_values_per100g_saturates = Float()
     nutr_values_per100g_sugars = Float()
-    URL = Text()
+    url = Text()
 
     def save(self, *args, **kwargs):
         """
