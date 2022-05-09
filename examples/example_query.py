@@ -55,7 +55,7 @@ def search(index: str, query: Query) -> None:
             hit.meta.id, hit.meta.score, hit.title, hit.nutr_values_per100g_energy,
             hit.nutr_values_per100g_fat, hit.nutr_values_per100g_protein,
             hit.nutr_values_per100g_salt, hit.nutr_values_per100g_saturates,
-            hit.nutr_values_per100g_sugars,sep="\t"
+            hit.nutr_values_per100g_sugars, hit.URL, sep="\t"
         )  # print the document id that is assigned by ES index, score and title
 
 if __name__ == "__main__":
