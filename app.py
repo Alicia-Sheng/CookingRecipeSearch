@@ -45,7 +45,7 @@ def results():
         query = Match(ingredients_plain_text={"query": query_text})
     else:
         query = Match(title={"query": query_text})
-    response = default_search(index_name, query, top_k, cuisine, sort, order)
+    response = default_search(index_name, query, top_k, cuisine, sort, order, query_text)
 
     page_id = 1  # set page id to be 1
     result_id = [r['id'] for r in response]  # store ids of all matched data
@@ -138,7 +138,7 @@ def health_results():
         response = health_nutr_num_search(index_name, search_strategy, top_k, cuisine, sort, order)
     else:
         query = Match(title={"query": query_text})
-        response = health_search_algo(index_name, query, top_k, cuisine, sort, order)
+        response = health_search_algo(index_name, query, top_k, cuisine, sort, order, query_text)
 
     page_id = 1  # set page id to be 1
     result_id = [r['id'] for r in response]  # store ids of all matched data
@@ -166,7 +166,7 @@ def health_results():
 #     order = request.form["order"]  # order (desc, asc)
 #
 #     query = Match(title={"query": query_text})
-#     response = health_search_algo(index_name, query, top_k, cuisine, sort, order)
+#     response = health_search_algo(index_name, query, top_k, cuisine, sort, order, query_text)
 #
 #     page_id = 1  # set page id to be 1
 #     result_id = [r['id'] for r in response]  # store ids of all matched data
@@ -220,11 +220,12 @@ def health_doc(doc_id):
 # ************************************************
 # Helper methods
 # ************************************************
-def default_search(index: str, query: Query, top_k: int, cuisine: str, sort: str, order: str) -> None:
+def default_search(index: str, query: Query, top_k: int, cuisine: str, sort: str, order: str, query_text: str) -> None:
     s = Search(using="default", index=index)
     if cuisine != "all":
         s = s.filter('term', cuisine=cuisine)
-    s = s.query(query)
+    if query_text != "":
+        s = s.query(query)
     if sort != "default" and sort != "ingredients":
         s = s.sort({sort: {"order": order}})
     s = s[:top_k]
@@ -232,11 +233,12 @@ def default_search(index: str, query: Query, top_k: int, cuisine: str, sort: str
     return r
 
 
-def health_search_algo(index: str, query: Query, top_k: int, cuisine: str, sort: str, order: str) -> None:
+def health_search_algo(index: str, query: Query, top_k: int, cuisine: str, sort: str, order: str, query_text: str) -> None:
     s = Search(using="default", index=index)
     if cuisine != "all":
         s = s.filter('term', cuisine=cuisine)
-    s = s.query(query)
+    if query_text != "":
+        s = s.query(query)
     if sort != "default":
         sort = nutrition_options[sort]
         s = s.sort({sort: {"order": order}})
