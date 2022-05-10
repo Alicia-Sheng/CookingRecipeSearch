@@ -1,3 +1,9 @@
+# ************************************************
+# Author: Gordon Dou
+# Date: May 9th, 2022
+# Description: this class is the elasticsearch schema definition
+# ************************************************
+
 from elasticsearch_dsl import (  # type: ignore
     Document,
     Text,
@@ -10,7 +16,6 @@ from elasticsearch_dsl import (  # type: ignore
     Nested,
     Object,
 )
-
 
 class BaseDoc(Document):
     """

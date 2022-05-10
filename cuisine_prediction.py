@@ -1,3 +1,14 @@
+# ************************************************
+# Author: Gordon Dou
+# Date: May 9th, 2022
+# Description: this class runs stratified k-fold cross-validation on LDA, KNN, Random Forest, SVM, Decision Tree, and MLP.
+# Adaboost, shrinkage LDA, SVM with RBF kernel function, Gradient Boost took extremely long time to execute
+# and failed to yield output on our computer. The results of each classifier will be saved as a csv file in the
+# output folder.
+#
+# side note: it took us over 20 hours to finish running all of the classfiers.
+# ************************************************
+
 from time import time
 
 import pandas as pd
@@ -10,6 +21,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import cross_val_score, RepeatedStratifiedKFold
 
+
 train_path = "data/embedded_whats_cooking/embedded_train.csv"
 output_path = "output/classifiers_accuracy_runtime.csv"
 
@@ -17,12 +29,12 @@ output_path = "output/classifiers_accuracy_runtime.csv"
 names = [
         'LDA',
         'Nearest Neighbors',
-        'AdaBoostClassifier',
+        # 'AdaBoostClassifier',
         'RandomForest',
         "Linear_SVM",
-        "RBF_SVM",
+        # "RBF_SVM",
         "Decision Tree",
-        "sLDA",
+        # "sLDA",
         "MLP",
 #         'GradientBoostingRegressor',
 #         'RUSBoost',
@@ -32,12 +44,12 @@ names = [
 classifiers = [
             LinearDiscriminantAnalysis(),
             KNeighborsClassifier(n_neighbors=20),
-            AdaBoostClassifier(n_estimators=400, learning_rate = 0.6),
+            # AdaBoostClassifier(n_estimators=400, learning_rate = 0.6),
             RandomForestClassifier(),
             SVC(kernel="linear", C=0.025),
-            SVC(gamma=2, C=1),
+            # SVC(gamma=2, C=1),
             DecisionTreeClassifier(),
-            LinearDiscriminantAnalysis(solver='lsqr', shrinkage='auto'),
+            # LinearDiscriminantAnalysis(solver='lsqr', shrinkage='auto'),
             MLPClassifier(random_state=1, max_iter=300),
 #             GradientBoostingRegressor(random_state=1),
 #             RUSBoostClassifier(n_estimators = 200, random_state=1),
