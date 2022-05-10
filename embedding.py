@@ -7,6 +7,11 @@ Date: May 9th, 2022
 Description: embedding implements sbert embedding and translates the datasets to n*768 numbers
 """
 
+# ************************************************
+# run in command line:
+# python -m embedding_service.server --embedding sbert --model msmarco-distilbert-base-v3
+# ************************************************
+
 from typing import Union
 import os
 import json
@@ -82,6 +87,5 @@ def load_doc(
 
 
 if __name__ == "__main__":
-    # python -m embedding_service.server --embedding sbert --model msmarco-distilbert-base-v3
     load_train("data/whats-cooking/train.json")
     load_doc("data/recipes_with_nutritional_info.json")

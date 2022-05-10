@@ -10,6 +10,9 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import cross_val_score, RepeatedStratifiedKFold
 
+train_path = "data/embedded_whats_cooking/embedded_train.csv"
+output_path = "output/classifiers_accuracy_runtime.csv"
+
 # a list of names of classifiers that you execute
 names = [
         'LDA',
@@ -41,7 +44,7 @@ classifiers = [
               ]
 
 # dataframe for loading training dataset
-df = pd.read_csv("data/embedded_whats_cooking/embedded_train.csv")
+df = pd.read_csv(train_path)
 
 y_labels = df["label"].tolist() # a list of true labels
 
@@ -112,4 +115,4 @@ for name in classifier_name:
 recording = {"Accuracy": accuracy_list, "Runtime(s)":time_list}
 
 df_record = pd.DataFrame(recording, index = classifier_name)
-df_record.to_csv("output/classifiers_accuracy_runtime.csv") # save the accuracy and the runtime of each classifier as a CSV file
+df_record.to_csv(output_path) # save the accuracy and the runtime of each classifier as a CSV file

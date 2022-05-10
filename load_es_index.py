@@ -7,6 +7,15 @@ Date: May 9th, 2022
 Description: load es index loads the recipe dataset and labels to the ES server
 """
 
+# ************************************************
+# run in command line:
+# whole data:
+# python load_es_index.py --index_name cooking_recipe --doc_path data/recipes_with_nutritional_info.json --label_path output/SVM_predicted_label.csv
+#
+# sample data:
+# python load_es_index.py --index_name cooking_recipe --doc_path sample_data/recipes_sample_data.json --label_path sample_data/SVM_predicted_label.csv
+# ************************************************
+
 import argparse
 import time
 from typing import List, Dict, Union, Iterator
@@ -76,5 +85,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main() # python load_es_index.py --index_name cooking_recipe --doc_path data/recipes_with_nutritional_info.json --label_path output/SVM_predicted_label.csv
+    main()
 
