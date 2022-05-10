@@ -8,7 +8,8 @@ from elasticsearch_dsl.connections import connections
 # ************************************************
 # Author:
 # routing methods: Tianjun Cai
-# search methods: Alicia Sheng
+# search methods: Alicia Sheng, Gordon Dou
+# Description: this module serves to implement front-end and back-end interaction
 # ************************************************
 
 app = Flask(__name__)
