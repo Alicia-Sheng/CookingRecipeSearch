@@ -68,7 +68,7 @@
                     <thead>
                     <tr>
                         {% for nutr in doc['nutr_values_per100g'].keys() %}
-                        <th scope="col">{{nutr}}</th>
+                        <th scope="col">{{nutr | capitalize}}</th>
                         {% endfor %}
                     </tr>
                     </thead>
