@@ -31,7 +31,34 @@
                     </p>
                 </div>
 
-                <p><strong>{{fat_num}}</strong></p>
+                {# Demonstrate nutr values indicated in sort by users (except in numeric value search) #}
+                {% if not nutr_num_search and sort != "default" %}
+                <div class="container">
+                    <p><strong>{{sort | capitalize}}: </strong>{{'%0.2f' % d['nutr_values_per100g'][sort] | float}}</p>
+                </div>
+                {% endif %}
+
+                {# only displays this value if search by nutr numeric values #}
+                {% if nutr_num_search %}
+                <div class="container">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            {% for nutr in d['nutr_values_per100g'].keys() %}
+                            <th scope="col">{{nutr | capitalize}}</th>
+                            {% endfor %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            {% for val in d['nutr_values_per100g'].values() %}
+                            <td>{{'%0.2f' % val|float}}</td>
+                            {% endfor %}
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
 
                 <div class="container">
                     <div class="progress">
@@ -75,6 +102,7 @@
                         <input name="result_id" type="hidden" value="{{ result_id }}">
                         <input name="query_text" type="hidden" value="{{ query_text }}">
                         <input name="num_page" type="hidden" value="{{ num_page }}">
+                        <input name="nutr_num_search" type="hidden" value="{{ nutr_num_search }}">
                         <input type="submit" value="Previous" class="btn btn-outline-secondary btn-sm">
                     </form>
                 </li>
@@ -87,10 +115,8 @@
                         <input name="result_id" type="hidden" value="{{ result_id }}">
                         <input name="query_text" type="hidden" value="{{ query_text }}">
                         <input name="num_page" type="hidden" value="{{ num_page }}">
+                        <input name="nutr_num_search" type="hidden" value="{{ nutr_num_search }}">
                         <input type="submit" value="{{ id + 1 }}" class="btn btn-outline-secondary btn-sm">
-
-                        <input name="fat_num" type="hidden" value="{{ fat_num }}">
-
                     </form>
                 </li>
             {% endfor %}
@@ -107,6 +133,7 @@
                         <input name="result_id" type="hidden" value="{{ result_id }}">
                         <input name="query_text" type="hidden" value="{{ query_text }}">
                         <input name="num_page" type="hidden" value="{{ num_page }}">
+                        <input name="nutr_num_search" type="hidden" value="{{ nutr_num_search }}">
                         <input type="submit" value="Next" class="btn btn-outline-secondary btn-sm">
                     </form>
                 </li>

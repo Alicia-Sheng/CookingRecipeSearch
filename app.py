@@ -201,7 +201,8 @@ def health_results():
     return render_template("health_results.html", query_text=query_text,
                            sort=sort, results=results, doc=result_display,
                            result_id=result_id, page_id=page_id, num_page=num_page,
-                           prev_disabled=prev_disabled, next_disabled=next_disabled)
+                           prev_disabled=prev_disabled, next_disabled=next_disabled,
+                           nutr_num_search=nutr_num_search)
 
 
 @app.route("/health_search/results/<int:page_id>", methods=["POST"])
@@ -219,6 +220,8 @@ def health_next_page(page_id):
     num_page = int(num_page_raw) if num_page_raw != "" else 0  # converts num of pages to int
     results_raw = request.form['results']  # acquire results in string format
     results = ast.literal_eval(results_raw)  # convert results into list
+    nutr_num_search_raw = request.form['nutr_num_search']
+    nutr_num_search = True if nutr_num_search_raw == "True" else False
 
     prev_disabled = True if page_id == 1 else False  # True if prev button disabled, false if not
     next_disabled = True if page_id == num_page else False  # True if next button disabled, false if not
@@ -230,7 +233,8 @@ def health_next_page(page_id):
     return render_template("health_results.html", query_text=query_text,
                            sort=None, results=results, doc=result_display,
                            result_id=result_id, page_id=page_id, num_page=num_page,
-                           prev_disabled=prev_disabled, next_disabled=next_disabled)
+                           prev_disabled=prev_disabled, next_disabled=next_disabled,
+                           nutr_num_search=nutr_num_search)
 
 
 @app.route("/health_search/doc/<doc_id>")
@@ -261,12 +265,12 @@ def default_search(index: str, query: Query, top_k: int, cuisine: str, sort: str
     :param order: desc or asc, order of results display
     :param query_text: user input query
     """
-    s = Search(using="default", index=index)
-    if cuisine != "all":
-        s = s.filter('term', cuisine=cuisine)
-    if query_text != "":
-        s = s.query(query)
-    if sort != "default" and sort != "ingredients":
+    s = Search(using="default", index=index)  # construct Search instance
+    if cuisine != "all":  # if user has specified cuisine
+        s = s.filter('term', cuisine=cuisine)  # filter on specified cuisine
+    if query_text != "":  # if user does not have empty query
+        s = s.query(query)  # query with Query instance
+    if sort != "default" and sort != "ingredients":  # sort only on complexity and healthiness
         s = s.sort({sort: {"order": order}})
     s = s[:top_k]
     r = s.execute()
@@ -334,8 +338,9 @@ def process_result_display(response: List) -> List:
         result_dict['health'] = result['fsa_lights_per100g']
         result_dict['ingredients'] = list(result['ingredients'].keys()) if result['ingredients'] != "" else []  # store only ingredients' names
         result_dict['complexity'] = len(result['instructions'].keys())  # store length of instructions as complexity
-        raw_cuisine = result['cuisine']
+        result_dict['nutr_values_per100g'] = result['nutr_values_per100g']
         # process cuisine input
+        raw_cuisine = result['cuisine']
         final_cuisine = raw_cuisine  # process cuisine display
         if raw_cuisine == "southern_us":
             final_cuisine = "Southern US"

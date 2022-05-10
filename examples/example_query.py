@@ -3,7 +3,9 @@ from typing import List
 from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import Match, MatchAll, ScriptScore, Query
 from elasticsearch_dsl.connections import connections
-#from embedding_service.client import EmbeddingClient
+
+
+# from embedding_service.client import EmbeddingClient
 
 # encoder = EmbeddingClient(host="localhost", embedding_type="sbert")
 # encoder = EmbeddingClient(host="localhost", embedding_type="fasttext")
@@ -27,10 +29,11 @@ def generate_script_score_query(query_vector: List[float], vector_name: str) -> 
     )
     return q_script
 
+
 def rescore_search(index: str, query: Query, rescore_query: Query) -> None:
     s = Search(using="default", index=index).query(query)[
         :5
-    ]  # initialize a query and return top five results
+        ]  # initialize a query and return top five results
     s = s.extra(
         rescore={
             "window_size": 5,
@@ -47,8 +50,10 @@ def rescore_search(index: str, query: Query, rescore_query: Query) -> None:
             hit.meta.id, hit.meta.score, hit.title, sep="\t"
         )  # print the document id that is assigned by ES index, score and title
 
+
 def search(index: str, query: Query) -> None:
-    s = Search(using="default", index=index).query(query)[:5].sort({"healthiness": {"order": "desc"}})  # initialize a query and return top five results
+    s = Search(using="default", index=index).query(query)[:5].sort(
+        {"healthiness": {"order": "desc"}})  # initialize a query and return top five results
     response = s.execute()
     for hit in response:
         print(
@@ -57,6 +62,7 @@ def search(index: str, query: Query) -> None:
             hit.nutr_values_per100g_salt, hit.nutr_values_per100g_saturates,
             hit.nutr_values_per100g_sugars, hit.URL, sep="\t"
         )  # print the document id that is assigned by ES index, score and title
+
 
 if __name__ == "__main__":
     # python load_es_index.py --index_name recipe_data --path data/recipes_with_nutritional_info.json
@@ -75,7 +81,7 @@ if __name__ == "__main__":
         "cooking_recipe", q_title
     )  # search, change the query object to see different results
 
-    print("="*20)
+    print("=" * 20)
 
     search(
         "cooking_recipe", q_ingredients
