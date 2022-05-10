@@ -1,3 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Author: Alicia Sheng
+Date: May 9th, 2022
+Description: load es index loads the recipe dataset and labels to the ES server
+"""
+
 import argparse
 import time
 from typing import List, Dict, Union, Iterator

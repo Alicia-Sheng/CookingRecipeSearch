@@ -1,3 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Author: Alicia Sheng
+Date: May 9th, 2022
+Description: index has the ESIndex class which specifies the es object fields with the corresponding dataset fields
+"""
+
 from typing import Iterator, Dict, Union, Sequence, Generator
 from elasticsearch_dsl import Index  # type: ignore
 from elasticsearch_dsl.connections import connections  # type: ignore
@@ -6,6 +15,9 @@ from doc_template import BaseDoc
 
 
 class ESIndex(object):
+    """
+    ESIndex specifiesthe es object fields with the corresponding dataset fields
+    """
     def __init__(
         self,
         index_name: str,
@@ -14,7 +26,7 @@ class ESIndex(object):
         """
         ES index structure
         :param index_name: the name of your index
-        :param docs: wapo docs to be loaded
+        :param docs: recipe docs to be loaded
         """
         # set an elasticsearch connection to your localhost
         connections.create_connection(hosts=["localhost"], timeout=100, alias="default")
@@ -36,7 +48,7 @@ class ESIndex(object):
     ) -> Generator[BaseDoc, None, None]:
         """
         populate the BaseDoc
-        :param docs: wapo docs
+        :param docs: recipe docs
         :return:
         """
         for i, doc in enumerate(docs):

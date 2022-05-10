@@ -1,4 +1,13 @@
-from typing import Dict, Union, Generator
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Author: Alicia Sheng
+Date: May 9th, 2022
+Description: embedding implements sbert embedding and translates the datasets to n*768 numbers
+"""
+
+from typing import Union
 import os
 import json
 from embedding_service.client import EmbeddingClient
@@ -9,9 +18,8 @@ def load_train(
     doc_path: Union[str, os.PathLike]
 ) -> None:
     """
-    load wapo docs as a generator
-    :param wapo_jl_path:
-    :return: yields each document as a dict
+    implement embedding to the training dataset
+    :param doc_path: path of the training dataset
     """
     f = open(doc_path, encoding='utf-8')
     data = json.load(f)
@@ -42,9 +50,8 @@ def load_doc(
     doc_path: Union[str, os.PathLike]
 ) -> None:
     """
-    load wapo docs as a generator
-    :param wapo_jl_path:
-    :return: yields each document as a dict
+    implement embedding to the recipe dataset
+    :param doc_path: path of the recipe dataset
     """
     f = open(doc_path, encoding='utf-8')
     data = json.load(f)
@@ -76,6 +83,5 @@ def load_doc(
 
 if __name__ == "__main__":
     # python -m embedding_service.server --embedding sbert --model msmarco-distilbert-base-v3
-    # load_train("data/whats-cooking/train.json")
-    # load_doc("data/recipes_with_nutritional_info.json")
-    pass
+    load_train("data/whats-cooking/train.json")
+    load_doc("data/recipes_with_nutritional_info.json")

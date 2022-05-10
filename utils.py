@@ -1,3 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Author: Alicia Sheng
+Date: May 9th, 2022
+Description: utils has the helper method to preprocess the dataset
+"""
+
 from typing import Dict, Union, Generator
 import os
 import json
@@ -8,8 +17,9 @@ def load_clean_doc(
         doc_path: Union[str, os.PathLike], label_path: Union[str, os.PathLike]
 ) -> Generator[Dict, None, None]:
     """
-    load wapo docs as a generator
-    :param doc_path:
+    load clean doc as a generator
+    :param doc_path: the path of the input dataset
+           label_path: the path
     :return: yields each document as a dict
     """
     f = open(doc_path)
@@ -80,6 +90,4 @@ def load_clean_doc(
 
 
 if __name__ == "__main__":
-    # doc_path = "data/recipes_with_nutritional_info.json"
-    # label_path = "output/SVM_predicted_label.csv"
     pass
