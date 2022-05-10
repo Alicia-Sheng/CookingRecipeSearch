@@ -2,37 +2,40 @@ from time import time
 
 import pandas as pd
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import AdaBoostClassifier
-from sklearn.model_selection import cross_val_score, RepeatedStratifiedKFold
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import cross_val_score, RepeatedStratifiedKFold
 
 names = [
-#         'GradientBoostingRegressor',
         'LDA',
-#         'Nearest Neighbors',
+        'Nearest Neighbors',
         'AdaBoostClassifier',
         'RandomForest',
         "Linear_SVM",
         "RBF_SVM",
-#         "Decision Tree",
+        "Decision Tree",
         "sLDA",
-#         "MLP",
+        "MLP",
+#         'GradientBoostingRegressor',
 #         'RUSBoost',
         ]
 
 # build classifiers
 classifiers = [
-#             GradientBoostingRegressor(random_state=1),
             LinearDiscriminantAnalysis(),
-#             KNeighborsClassifier(n_neighbors=4),
+            KNeighborsClassifier(n_neighbors=20),
             AdaBoostClassifier(n_estimators=400, learning_rate = 0.6),
             RandomForestClassifier(),
             SVC(kernel="linear", C=0.025),
             SVC(gamma=2, C=1),
-#             DecisionTreeClassifier(),
+            DecisionTreeClassifier(),
             LinearDiscriminantAnalysis(solver='lsqr', shrinkage='auto'),
-#             MLPClassifier(random_state=1, max_iter=300),
+            MLPClassifier(random_state=1, max_iter=300),
+#             GradientBoostingRegressor(random_state=1),
 #             RUSBoostClassifier(n_estimators = 200, random_state=1),
               ]
 
