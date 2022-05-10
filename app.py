@@ -5,6 +5,12 @@ from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import Match, MatchAll, ScriptScore, Ids, Query
 from elasticsearch_dsl.connections import connections
 
+# ************************************************
+# Author:
+# routing methods: Tianjun Cai
+# search methods: Alicia Sheng
+# ************************************************
+
 app = Flask(__name__)
 index_name = "cooking_recipe"  # name of es index
 top_k = 20  # define number of documents demonstrated
@@ -244,6 +250,16 @@ def health_doc(doc_id):
 # Helper methods
 # ************************************************
 def default_search(index: str, query: Query, top_k: int, cuisine: str, sort: str, order: str, query_text: str) -> None:
+    """
+    provide functionality to search es
+    :param index: index name
+    :param query: query instance for search
+    :param top_k: top_k results stored in list
+    :param cuisine: cuisine to filter on
+    :param sort: type of emphasis (complexity, healthiness) to be sorted on
+    :param order: desc or asc, order of results display
+    :param query_text: user input query
+    """
     s = Search(using="default", index=index)
     if cuisine != "all":
         s = s.filter('term', cuisine=cuisine)
@@ -257,22 +273,32 @@ def default_search(index: str, query: Query, top_k: int, cuisine: str, sort: str
 
 
 def health_search_algo(index: str, query: Query, top_k: int, cuisine: str, sort: str, order: str, query_text: str) -> None:
-    s = Search(using="default", index=index)
-    if cuisine != "all":
-        s = s.filter('term', cuisine=cuisine)
-    if query_text != "":
-        s = s.query(query)
-    if sort != "default":
-        sort = nutrition_options[sort]
-        s = s.sort({sort: {"order": order}})
-    s = s[:top_k]
-    r = s.execute()
+    """
+    provide functionality to search es
+    :param index: index name
+    :param query: query instance for search
+    :param top_k: top_k results stored in list
+    :param cuisine: cuisine to filter on
+    :param sort: type of nutr to be sorted
+    :param order: desc or asc, order of results display
+    :param query_text: user input query
+    """
+    s = Search(using="default", index=index)  # construct Search instance
+    if cuisine != "all":  # if user has specified cuisine
+        s = s.filter('term', cuisine=cuisine)  # filter on specified cuisine
+    if query_text != "":  # if user does not have empty query
+        s = s.query(query)  # query with Query instance
+    if sort != "default":  # if user has specified nutrition to sort on
+        sort = nutrition_options[sort]  # retrieve corresponding es key for sort
+        s = s.sort({sort: {"order": order}})  # sort based on nutr and order (desc, asc)
+    s = s[:top_k]  # get top_k of results
+    r = s.execute()  # execute search
     return r
 
 
 def health_nutr_num_search(strategy: Dict, top_k: int, cuisine: str, sort: str, order: str, query_text: str) -> None:
     """
-    provide functionality to search es when user used advanced & customized search in health search
+    provide functionality to search es when user use advanced & customized search in health search
     :param strategy: strategy for search on numeric values
     :param top_k: top_k results stored in list
     :param cuisine: cuisine to filter on
@@ -294,6 +320,10 @@ def health_nutr_num_search(strategy: Dict, top_k: int, cuisine: str, sort: str, 
 
 
 def process_result_display(response: List) -> List:
+    """
+    process results for display
+    :param: response list to be comprehensive result list
+    """
     results = []  # store processed content block
     for result in response:  # iterate through response list
         result = result.to_dict()  # convert response to dictionary
@@ -302,7 +332,6 @@ def process_result_display(response: List) -> List:
         result_dict['title'] = result['title']
         result_dict['health'] = result['fsa_lights_per100g']
         result_dict['ingredients'] = list(result['ingredients'].keys()) if result['ingredients'] != "" else []  # store only ingredients' names
-        result_dict['ingredients_description'] = [val['description'] for val in result['ingredients'].values()]  # store ingredients' description
         result_dict['complexity'] = len(result['instructions'].keys())  # store length of instructions as complexity
         raw_cuisine = result['cuisine']
         # process cuisine input
@@ -314,7 +343,7 @@ def process_result_display(response: List) -> List:
         else:
             final_cuisine = final_cuisine.capitalize()
         result_dict['cuisine'] = final_cuisine
-        results.append(result_dict)
+        results.append(result_dict)  # append result_dict to results
     return results
 
 
